@@ -1,0 +1,41 @@
+{
+  "spent": 111,
+  "results": {
+    "hero": {
+      "url": "https://tempfile.aiquickdraw.com/ggc/2f45ebe81bd0afd96de72068ca4d2fda_1787670951916.jpeg",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/hero-can.png",
+      "credits": 8,
+      "taskId": "2f45ebe81bd0afd96de72068ca4d2fda"
+    },
+    "splash": {
+      "url": "https://tempfile.aiquickdraw.com/ggc/9e57e0032e48465371183cc10d580f2f_1787671364259.jpeg",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/splash.png",
+      "credits": 8,
+      "taskId": "9e57e0032e48465371183cc10d580f2f"
+    },
+    "macro": {
+      "url": "https://tempfile.aiquickdraw.com/ggc/5390528f59a92f9e72015e4f7fbd460d_1787671028943.jpeg",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/macro.png",
+      "credits": 8,
+      "taskId": "5390528f59a92f9e72015e4f7fbd460d"
+    },
+    "trio": {
+      "url": "https://tempfile.aiquickdraw.com/a2/1af0b55872046cf52784a36e71f1e7f4_1787671439452.png",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/trio.png",
+      "credits": 8,
+      "taskId": "1af0b55872046cf52784a36e71f1e7f4"
+    },
+    "droplets": {
+      "url": "https://tempfile.aiquickdraw.com/vnp/7ac4d87feca5b39dc85ba0f3f9896f56_1787671113.jpeg",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/droplets.png",
+      "credits": 8,
+      "taskId": "7ac4d87feca5b39dc85ba0f3f9896f56"
+    },
+    "spin": {
+      "url": "https://tempfile.aiquickdraw.com/k/b2da7e05bba596de74d0eef83b3d92d0_1_1787671143_3008.mp4",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/spin.mp4",
+      "credits": 55,
+      "taskId": "b2da7e05bba596de74d0eef83b3d92d0"
+    }
+  }
+}
