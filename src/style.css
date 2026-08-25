@@ -327,6 +327,33 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .spin-caption p { color: var(--dim); margin-top: 10px; }
 
+/* the flip-side card — real, legible English facts synced to the back view */
+.spin-caption--facts {
+  text-align: left;
+  max-width: 320px;
+  background: color-mix(in srgb, var(--ink) 82%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px 22px 16px;
+}
+.spin-caption--facts h2 { font-size: clamp(30px, 3vw, 44px); }
+.facts { margin-top: 12px; border-top: 2px solid var(--paper); }
+.facts > div {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 18px;
+  padding: 6px 0; border-bottom: 1px solid var(--line);
+}
+.facts dt {
+  font: 500 11px/1.4 var(--body); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--dim);
+}
+.facts dd {
+  font: 700 13px/1.4 var(--body); color: var(--paper);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.facts-note { font-size: 12px; }
+
 /* ── splash ───────────────────────────────────────────────────────────── */
 
 .splash {

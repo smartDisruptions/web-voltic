@@ -1,5 +1,5 @@
 {
-  "spent": 166,
+  "spent": 174,
   "results": {
     "hero": {
       "url": "https://tempfile.aiquickdraw.com/ggc/2f45ebe81bd0afd96de72068ca4d2fda_1787670951916.jpeg",
@@ -36,6 +36,12 @@
       "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/spin.mp4",
       "credits": 55,
       "taskId": "f9fb46ca717fed05ed284472127ede9e"
+    },
+    "backpanel": {
+      "url": "https://tempfile.aiquickdraw.com/ggc/cb9ba1da5af8a4d8452649a0502248ca_1787679554924.jpeg",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/backpanel.png",
+      "credits": 8,
+      "taskId": "cb9ba1da5af8a4d8452649a0502248ca"
     }
   }
 }

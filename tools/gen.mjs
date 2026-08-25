@@ -137,6 +137,33 @@ const cmds = {
     }
   },
 
+  async backpanel() {
+    // the straight-on back frame from the deployed spin sequence
+    const backUrl = 'https://web-voltic.vercel.app/frames/f31.jpg';
+    const r = await kie.generate({
+      model: 'nano-banana-2',
+      input: {
+        prompt:
+          'Edit this photograph of the back of a matte black energy drink can. Replace ALL the ' +
+          'text printed on the can with a clean, perfectly legible ENGLISH label laid out like a ' +
+          'real beverage back panel, in crisp thin white print: a heading "NUTRITION FACTS" and ' +
+          'below it "Serving 473ml", "Calories 5", "Total Sugars 0g", "Caffeine 200mg", ' +
+          '"Taurine 1000mg", "L-Theanine 100mg", "Niacin B3 16mg", "Vitamin B6 1.7mg", ' +
+          '"Vitamin B12 2.4mcg", "Sodium 105mg", "Potassium 70mg". Keep the existing barcode. ' +
+          'Change NOTHING else: same matte black can, same condensation droplets, same lighting, ' +
+          'same dark background, same reflection, same camera angle. The text must be real ' +
+          'English words, sharp and readable, not decorative marks.',
+        aspect_ratio: '2:3',
+        image_urls: [backUrl],
+      },
+      label: 'backpanel',
+      estimate: 10,
+    });
+    const f = join(RAW, 'backpanel.png');
+    await download(r.urls[0], f);
+    save('backpanel', r, f);
+  },
+
   async droplets() {
     const r = await kie.generate({
       model: 'nano-banana-2',
