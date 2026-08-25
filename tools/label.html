@@ -16,10 +16,12 @@
   .front { position: absolute; left: 0; top: 0; width: 1024px; height: 1600px; }
   .bolt { position: absolute; left: 512px; top: 120px; transform: translateX(-50%); }
   .wordmark {
+    /* reads bottom-to-top like the hero photo: V at the base, C under the
+       bolt; gradient reversed pre-rotation so cyan stays at the can's top */
     position: absolute; left: 512px; top: 870px;
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: translate(-50%, -50%) rotate(-90deg);
     font-family: Anton; font-size: 300px; letter-spacing: 0.02em;
-    background: linear-gradient(90deg, #2fd8f5 8%, #7de37d 55%, #b7e93c 92%);
+    background: linear-gradient(90deg, #b7e93c 8%, #7de37d 45%, #2fd8f5 92%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     white-space: nowrap;
   }
