@@ -16,7 +16,7 @@ export function createCan3D(container) {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 0.95;
   container.appendChild(renderer.domElement);
   renderer.domElement.style.cssText = 'width:100%;height:100%;display:block';
 
@@ -29,8 +29,8 @@ export function createCan3D(container) {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.06).texture;
 
   // ── lights: the studio rig ────────────────────────────────────────────
-  scene.add(new THREE.AmbientLight(0x28323a, 0.55));
-  const key = new THREE.DirectionalLight(0xffffff, 0.5);
+  scene.add(new THREE.AmbientLight(0x28323a, 0.4));
+  const key = new THREE.DirectionalLight(0xffffff, 0.42);
   key.position.set(0.7, 1.6, 2.6);
   scene.add(key);
   const cyanRim = new THREE.DirectionalLight(0x2fd8f5, 1.55);
@@ -59,13 +59,14 @@ export function createCan3D(container) {
     map: label,
     emissiveMap: glow,
     emissive: 0xffffff,
-    emissiveIntensity: 0.55,
+    emissiveIntensity: 0.42,
     roughness: 0.46,
     metalness: 0.12,
-    clearcoat: 0.45,
     clearcoatRoughness: 0.4,
     bumpMap: drops,
     bumpScale: 0.6,
+    envMapIntensity: 0.22,
+    clearcoat: 0.3,
   });
   const darkMetal = new THREE.MeshStandardMaterial({ color: 0x15181a, roughness: 0.5, metalness: 0.6 });
   const silver = new THREE.MeshStandardMaterial({ color: 0xb9c2c6, roughness: 0.32, metalness: 1.0 });
