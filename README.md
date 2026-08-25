@@ -29,7 +29,10 @@ static page.
 one hero can (nano-banana-2), a 5s turntable video from that exact image
 (kling-2.6 image-to-video) sliced to 60 JPEG frames with ffmpeg, three
 photoreal stills referencing the same can, and the droplet plate.
-Total spend: **111 of a 200-credit budget** (including one off-brand retry).
+Total spend: **229 credits** (200 budget + a Josh-approved 50 extension for the
+English back panel: video models can't render legible micro-text, so the back's
+nutrition facts come from a nano-banana still that the 360° scrub dips to across
+the readable arc).
 
 ## Dev
 

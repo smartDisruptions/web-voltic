@@ -1,5 +1,5 @@
 {
-  "spent": 174,
+  "spent": 229,
   "results": {
     "hero": {
       "url": "https://tempfile.aiquickdraw.com/ggc/2f45ebe81bd0afd96de72068ca4d2fda_1787670951916.jpeg",
@@ -32,10 +32,10 @@
       "taskId": "7ac4d87feca5b39dc85ba0f3f9896f56"
     },
     "spin": {
-      "url": "https://tempfile.aiquickdraw.com/k/f9fb46ca717fed05ed284472127ede9e_1_1787678842_3429.mp4",
+      "url": "https://tempfile.aiquickdraw.com/k/f93ffb40fc596b5d5ab99a721cff1abf_1_1787680083_6432.mp4",
       "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/spin.mp4",
       "credits": 55,
-      "taskId": "f9fb46ca717fed05ed284472127ede9e"
+      "taskId": "f93ffb40fc596b5d5ab99a721cff1abf"
     },
     "backpanel": {
       "url": "https://tempfile.aiquickdraw.com/ggc/cb9ba1da5af8a4d8452649a0502248ca_1787679554924.jpeg",

@@ -18,7 +18,7 @@ import { KieClient, SpendLedger, download } from './kie.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const RAW = join(ROOT, 'assets', 'raw');
 const MANIFEST = join(RAW, 'manifest.json');
-const CEILING = 200;
+const CEILING = 230; // Josh approved ~50 more on 2026-08-25 for the English-back spin rerun
 
 // Key lives in asset-forge/.env — single source, never copied into this repo.
 const envFile = join(ROOT, '..', 'asset-forge', '.env');
@@ -72,26 +72,33 @@ const cmds = {
   },
 
   async spin() {
-    // reference the deployed asset — kie's own result URLs are short-lived
-    const heroUrl = 'https://web-voltic.vercel.app/img/hero-can.jpg';
+    // v3: seed from the BACK panel (legible English is the thing kling cannot
+    // invent), let it draw the front from an exact description, and re-index
+    // the extracted frames afterwards so the scrub still starts at the front.
+    const backUrl = 'https://web-voltic.vercel.app/img/back-panel.jpg';
     const r = await kie.generate({
       model: 'kling-2.6/image-to-video',
       input: {
         prompt:
-          'Studio product turntable shot. The camera is locked off and does not move. The energy ' +
-          'drink can rotates smoothly and continuously about its own vertical axis, completing ' +
-          'exactly one full 360 degree rotation at constant speed over the whole clip, ending at ' +
-          'the same orientation it started. The large VOLTIC wordmark exists ONLY ONCE, on the ' +
-          'front face of the can — as the back of the can rotates into view it shows only a small ' +
-          'plain nutrition facts panel and a barcode in thin white print on the matte black metal. ' +
-          'Never duplicate the logo, never mirror the label. ' +
-          'Lighting, background, reflections and condensation stay constant. Nothing else moves.',
-        image_urls: [heroUrl],
+          'Studio product turntable shot. The camera is locked off and does not move. The matte ' +
+          'black energy drink can rotates smoothly and continuously about its own vertical axis, ' +
+          'completing exactly one full 360 degree rotation at constant speed, ending at exactly ' +
+          'the same orientation it started. We start facing the back of the can with its white ' +
+          'English NUTRITION FACTS panel and barcode — that printed text stays pin-sharp, ' +
+          'unchanged and readable whenever the back faces the camera. As the can turns, the ' +
+          'front face comes into view: the word "VOLTIC" in large bold uppercase letters running ' +
+          'VERTICALLY down the can, glowing electric cyan at the top fading to acid lime green ' +
+          'at the bottom, with a small sharp cyan lightning bolt above the wordmark and tiny ' +
+          'text "LIQUID LIGHTNING - ENERGY" near the base. The wordmark appears exactly once. ' +
+          'Lighting, dark background, reflections and condensation droplets stay constant. ' +
+          'Nothing else moves.',
+        image_urls: [backUrl],
         sound: false,
         duration: '5',
       },
-      label: 'spin-360-v2',
-      estimate: 60,
+      label: 'spin-360-v3',
+      estimate: 55, // both prior kling-2.6 5s runs settled at exactly 55
+
     });
     const f = join(RAW, 'spin.mp4');
     await download(r.urls[0], f);
