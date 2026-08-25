@@ -5,6 +5,27 @@
    and .is-in classes.
    ═══════════════════════════════════════════════════════════════════════ */
 
+@font-face {
+  font-family: 'Anton';
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url('/fonts/anton-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url('/fonts/archivo-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal; font-weight: 500; font-display: swap;
+  src: url('/fonts/archivo-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal; font-weight: 700; font-display: swap;
+  src: url('/fonts/archivo-700.woff2') format('woff2');
+}
+
 :root {
   --ink: #06080a;
   --ink-2: #0a0e11;
@@ -151,16 +172,17 @@ img { max-width: 100%; height: auto; display: block; }
 /* every hero layer shares the one cell — depth comes from transforms, not flow */
 .hero > .hero-can-wrap, .hero > .hero-copy { grid-area: 1 / 1; }
 
+/* the gradients are already soft — a live blur() filter on top was pure GPU waste */
 .hero-glow {
-  position: absolute; border-radius: 50%; filter: blur(90px); will-change: transform;
+  position: absolute; border-radius: 50%; will-change: transform;
 }
 .hero-glow--cyan {
-  width: 55vmax; height: 55vmax; left: -12vmax; top: -18vmax;
-  background: radial-gradient(circle, rgba(47, 216, 245, 0.16), transparent 65%);
+  width: 60vmax; height: 60vmax; left: -14vmax; top: -20vmax;
+  background: radial-gradient(circle, rgba(47, 216, 245, 0.14) 0%, rgba(47, 216, 245, 0.05) 40%, transparent 68%);
 }
 .hero-glow--lime {
-  width: 48vmax; height: 48vmax; right: -14vmax; bottom: -16vmax;
-  background: radial-gradient(circle, rgba(183, 233, 60, 0.12), transparent 65%);
+  width: 52vmax; height: 52vmax; right: -16vmax; bottom: -18vmax;
+  background: radial-gradient(circle, rgba(183, 233, 60, 0.11) 0%, rgba(183, 233, 60, 0.04) 40%, transparent 68%);
 }
 
 .hero-ghost {
@@ -204,10 +226,10 @@ img { max-width: 100%; height: auto; display: block; }
 [data-tilt] { transform: var(--plx, none) var(--tiltT, ); }
 
 /* droplet field — the generated droplets-on-black plate, screen-blended so
-   only the lit droplets survive; three tiled copies at different scales = depth */
+   only the lit droplets survive; three tiled copies at different scales = depth.
+   Blur/saturation per depth is baked into each image variant — no live filters. */
 .drops {
   position: absolute; inset: -12%;
-  background-image: url('/img/droplets.jpg');
   background-size: 760px auto;
   background-position: center;
   mix-blend-mode: screen;
@@ -217,9 +239,9 @@ img { max-width: 100%; height: auto; display: block; }
   mask-image: radial-gradient(58% 52% at 50% 46%, transparent 28%, #000 78%);
   -webkit-mask-image: radial-gradient(58% 52% at 50% 46%, transparent 28%, #000 78%);
 }
-.drops--far  { opacity: 0.16; background-size: 520px auto; transform: var(--plx, none); filter: blur(2.5px); }
-.drops--mid  { opacity: 0.22; transform: var(--plx, none) rotate(180deg); filter: blur(1px); }
-.drops--near { opacity: 0.3; background-size: 1200px auto; transform: var(--plx, none) scale(1.06); filter: saturate(1.25); }
+.drops--far  { opacity: 0.16; background-image: url('/img/drops-far.webp'); background-size: 520px auto; transform: var(--plx, none); }
+.drops--mid  { opacity: 0.22; background-image: url('/img/drops-mid.webp'); transform: var(--plx, none) rotate(180deg); }
+.drops--near { opacity: 0.3; background-image: url('/img/drops-near.webp'); background-size: 1200px auto; transform: var(--plx, none) scale(1.06); }
 
 .hero-copy {
   position: relative; z-index: 5;
@@ -291,7 +313,9 @@ img { max-width: 100%; height: auto; display: block; }
   height: min(78svh, 900px);
   width: auto;
   aspect-ratio: 2 / 3;
-  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
+  /* box-shadow paints once; a drop-shadow filter re-applies on every frame draw */
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
 }
 
 .spin-hud {

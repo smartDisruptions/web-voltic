@@ -69,6 +69,12 @@ function measure() {
     el, top: offTop(el), h: el.offsetHeight,
   }));
 
+  if (marquee) {
+    const band = marquee.parentElement;
+    marqueeTop = offTop(band);
+    marqueeBottom = marqueeTop + band.offsetHeight;
+  }
+
   measureSpin();
 }
 
@@ -109,7 +115,7 @@ function loadFrames() {
   for (let i = 0; i < FRAMES; i++) if (i % 4) order.push(i);
   for (const i of order) {
     const img = new Image();
-    img.src = `/frames/f${String(i + 1).padStart(2, '0')}.jpg`;
+    img.src = `/frames/f${String(i + 1).padStart(2, '0')}.webp`;
     img.decode?.().catch(() => {});
     img.onload = () => {
       if (i === 0) {
@@ -139,6 +145,8 @@ function drawFrame(n, force = false) {
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 }
 
+let lastDeg = '', lastFill = -1, lastCanA = -1, lastCardE = -1;
+
 function updateSpin() {
   if (!spinSection) return;
   const p = clamp01((state.smoothY - spinTop) / spinRange);
@@ -146,21 +154,32 @@ function updateSpin() {
   drawFrame(Math.round(pr * (FRAMES - 1)));
 
   // act 1 → act 2: can (and its degree readout) dissolve while still turning
-  const canA = p <= FADE_START ? 1 : clamp01(1 - (p - FADE_START) / (FADE_END - FADE_START));
-  canvas.style.opacity = canA;
-  if (degEl) {
-    degEl.textContent = String(Math.round(pr * ARC_DEG)).padStart(3, '0');
-    degEl.parentElement.style.opacity = canA;
+  const canA = Math.round((p <= FADE_START ? 1
+    : clamp01(1 - (p - FADE_START) / (FADE_END - FADE_START))) * 100) / 100;
+  if (canA !== lastCanA) {
+    lastCanA = canA;
+    canvas.style.opacity = canA;
+    if (degEl) degEl.parentElement.style.opacity = canA;
   }
-  if (fillEl) fillEl.style.width = `${p * 100}%`;
+  if (degEl) {
+    const deg = String(Math.round(pr * ARC_DEG)).padStart(3, '0');
+    if (deg !== lastDeg) { lastDeg = deg; degEl.textContent = deg; }
+  }
+  if (fillEl) {
+    const fill = Math.round(p * 200) / 2;
+    if (fill !== lastFill) { lastFill = fill; fillEl.style.width = `${fill}%`; }
+  }
 
   if (cardEl) {
     const a = clamp01((p - CARD_IN) / (CARD_FULL - CARD_IN));
-    const e = 1 - Math.pow(1 - a, 3);
-    cardEl.style.opacity = e;
-    cardEl.style.transform =
-      `translate(-50%, -50%) translateY(${(1 - e) * 48}px) scale(${0.94 + e * 0.06})`;
-    cardEl.style.pointerEvents = a > 0.5 ? 'auto' : 'none';
+    const e = Math.round((1 - Math.pow(1 - a, 3)) * 200) / 200;
+    if (e !== lastCardE) {
+      lastCardE = e;
+      cardEl.style.opacity = e;
+      cardEl.style.transform =
+        `translate(-50%, -50%) translateY(${((1 - e) * 48).toFixed(1)}px) scale(${(0.94 + e * 0.06).toFixed(3)})`;
+      cardEl.style.pointerEvents = e > 0.5 ? 'auto' : 'none';
+    }
   }
 
   const step = p < 0.28 ? 0 : p < SPIN_END ? 1 : -1;
@@ -179,7 +198,7 @@ if (spinSection) {
 
 // ── marquee ──────────────────────────────────────────────────────────────
 const marquee = document.querySelector('.marquee-track');
-let marqueeX = 0, marqueeW = 0;
+let marqueeX = 0, marqueeW = 0, marqueeTop = 0, marqueeBottom = 0;
 
 // ── hover tilt ───────────────────────────────────────────────────────────
 for (const card of document.querySelectorAll('[data-tilt]')) {
@@ -193,13 +212,12 @@ for (const card of document.querySelectorAll('[data-tilt]')) {
 }
 
 // ── the loop ─────────────────────────────────────────────────────────────
-function tick() {
-  const prev = state.smoothY;
-  state.smoothY = lerp(state.smoothY, state.y, 0.18);
-  state.vel = state.smoothY - prev;
-  state.smx = lerp(state.smx, state.mx, 0.06);
-  state.smy = lerp(state.smy, state.my, 0.06);
+// When scroll and pointer have settled, no styles are written at all — the
+// loop idles at a couple of comparisons per frame instead of restyling ~20
+// elements forever. One extra pass runs after settling so values land exact.
+let wasActive = true;
 
+function writeParallax() {
   const center = state.smoothY + vp.h / 2;
 
   for (const l of layers) {
@@ -207,27 +225,46 @@ function tick() {
     const px = l.depth ? state.smx * l.depth * -220 : 0;
     const py = l.depth ? state.smy * l.depth * -140 : 0;
     // written as a variable so each layer's static scale/rotate/tilt composes
-    l.el.style.setProperty('--plx', `translate3d(${px}px, ${sy + py}px, 0)`);
+    l.el.style.setProperty('--plx', `translate3d(${px.toFixed(2)}px, ${(sy + py).toFixed(2)}px, 0)`);
   }
 
   for (const it of inners) {
     const p = clamp01((state.smoothY + vp.h - it.top) / (vp.h + it.h));
-    it.img.style.transform = `translate3d(0, ${-it.range * p}px, 0)`;
+    it.img.style.transform = `translate3d(0, ${(-it.range * p).toFixed(2)}px, 0)`;
   }
 
   for (const c of clips) {
     const p = clamp01(((state.smoothY + vp.h - c.top) / (vp.h * 0.7)));
-    c.el.style.setProperty('--clip', String((1 - p) * 100));
-  }
-
-  if (marquee) {
-    if (!marqueeW) marqueeW = marquee.scrollWidth / 2;
-    marqueeX = (marqueeX - (0.8 + Math.min(14, Math.abs(state.vel) * 0.6))) % marqueeW;
-    const skew = Math.max(-8, Math.min(8, state.vel * 0.35));
-    marquee.style.transform = `translate3d(${marqueeX}px, 0, 0) skewX(${skew}deg)`;
+    c.el.style.setProperty('--clip', ((1 - p) * 100).toFixed(2));
   }
 
   updateSpin();
+}
+
+function tick() {
+  const prev = state.smoothY;
+  state.smoothY = lerp(state.smoothY, state.y, 0.18);
+  if (Math.abs(state.y - state.smoothY) < 0.05) state.smoothY = state.y;
+  state.vel = state.smoothY - prev;
+  state.smx = lerp(state.smx, state.mx, 0.06);
+  state.smy = lerp(state.smy, state.my, 0.06);
+  if (Math.abs(state.mx - state.smx) < 0.0005) state.smx = state.mx;
+  if (Math.abs(state.my - state.smy) < 0.0005) state.smy = state.my;
+
+  const active = state.smoothY !== state.y || state.vel !== 0 ||
+    state.smx !== state.mx || state.smy !== state.my;
+
+  if (active || wasActive) writeParallax();
+  wasActive = active;
+
+  // the marquee self-animates, but only while its band is on screen
+  if (marquee && state.smoothY + vp.h > marqueeTop && state.smoothY < marqueeBottom) {
+    if (!marqueeW) marqueeW = marquee.scrollWidth / 2;
+    marqueeX = (marqueeX - (0.8 + Math.min(14, Math.abs(state.vel) * 0.6))) % marqueeW;
+    const skew = Math.max(-8, Math.min(8, state.vel * 0.35));
+    marquee.style.transform = `translate3d(${marqueeX.toFixed(2)}px, 0, 0) skewX(${skew.toFixed(2)}deg)`;
+  }
+
   requestAnimationFrame(tick);
 }
 

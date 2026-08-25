@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node tools/inline.mjs",
     "preview": "vite preview"
   },
   "devDependencies": {
     "playwright-core": "^1.62.1",
+    "sharp": "^0.35.3",
     "vite": "^6.0.0"
   }
 }
