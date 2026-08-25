@@ -5,7 +5,6 @@
  * when something changed, so the idle cost is zero.
  */
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 const R = 0.29;            // can radius
 const BODY_H = 1.42;       // label wrap height
@@ -13,7 +12,7 @@ const FLOOR_Y = -0.86;
 
 export function createCan3D(container) {
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 700 ? 1.5 : 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.95;
@@ -25,8 +24,22 @@ export function createCan3D(container) {
   camera.position.set(0, 0.14, 4.7);
   camera.lookAt(0, -0.04, 0);
 
+  // tiny procedural studio env — replaces RoomEnvironment, whose full hidden
+  // room cost real milliseconds at boot and bleached the label
+  const envCanvas = document.createElement('canvas');
+  envCanvas.width = 64; envCanvas.height = 32;
+  const ec = envCanvas.getContext('2d');
+  const eg = ec.createLinearGradient(0, 0, 0, 32);
+  eg.addColorStop(0, '#39434a'); eg.addColorStop(0.55, '#14181b'); eg.addColorStop(1, '#050607');
+  ec.fillStyle = eg; ec.fillRect(0, 0, 64, 32);
+  ec.fillStyle = 'rgba(47,216,245,0.35)'; ec.fillRect(2, 9, 10, 13);
+  ec.fillStyle = 'rgba(183,233,60,0.30)'; ec.fillRect(52, 9, 10, 13);
+  const envTex = new THREE.CanvasTexture(envCanvas);
+  envTex.mapping = THREE.EquirectangularReflectionMapping;
+  envTex.colorSpace = THREE.SRGBColorSpace;
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.06).texture;
+  scene.environment = pmrem.fromEquirectangular(envTex).texture;
+  envTex.dispose();
 
   // ── lights: the studio rig ────────────────────────────────────────────
   scene.add(new THREE.AmbientLight(0x28323a, 0.4));
@@ -49,9 +62,9 @@ export function createCan3D(container) {
 
   const label = tex('/tex/label.webp');
   const glow = tex('/tex/glow.webp');
-  const drops = loader.load('/img/droplets.jpg', (t) => {
+  const drops = loader.load('/tex/drops-bump.webp', (t) => {
     t.wrapS = t.wrapT = THREE.RepeatWrapping;
-    t.repeat.set(2.2, 1.5);
+    t.repeat.set(3, 2);
     dirty = true;
   });
 
@@ -66,7 +79,6 @@ export function createCan3D(container) {
     bumpMap: drops,
     bumpScale: 0.6,
     envMapIntensity: 0.22,
-    clearcoat: 0.3,
   });
   const darkMetal = new THREE.MeshStandardMaterial({ color: 0x15181a, roughness: 0.5, metalness: 0.6 });
   const silver = new THREE.MeshStandardMaterial({ color: 0xb9c2c6, roughness: 0.32, metalness: 1.0 });
@@ -111,18 +123,18 @@ export function createCan3D(container) {
   const fadeTex = new THREE.DataTexture(fadeData, 1, 128, THREE.RedFormat);
   fadeTex.needsUpdate = true;
 
+  // the reflection is dim and blurred by eye anyway — Lambert shading there
+  // halves the per-frame fragment cost of the scene
   const refl = can.clone(true);
   refl.traverse((o) => {
     if (!o.isMesh) return;
-    o.material = o.material.clone();
-    o.material.transparent = true;
-    if (o.geometry.type === 'CylinderGeometry' && o.material.map) {
-      o.material.alphaMap = fadeTex;
-      o.material.opacity = 0.34;
-    } else {
-      o.material.opacity = 0.12;
-    }
-    o.material.emissiveIntensity = 0.5;
+    const src = o.material;
+    o.material = src.map
+      ? new THREE.MeshLambertMaterial({
+          map: src.map, emissive: 0xffffff, emissiveMap: glow,
+          emissiveIntensity: 0.3, transparent: true, opacity: 0.34, alphaMap: fadeTex,
+        })
+      : new THREE.MeshLambertMaterial({ color: src.color, transparent: true, opacity: 0.12 });
   });
   refl.scale.y = -1;
   refl.position.y = 2 * FLOOR_Y - can.position.y;
@@ -176,6 +188,11 @@ export function createCan3D(container) {
     dirty = true;
   }
   resize();
+
+  // pay the shader-compile and first-upload cost now, at boot, instead of on
+  // the user's first scroll frame into the section
+  apply();
+  renderer.render(scene, camera);
 
   // drag-to-spin: adds a decaying manual offset on top of the scroll angle
   let dragging = false, lastX = 0;

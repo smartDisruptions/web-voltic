@@ -231,7 +231,7 @@ if (spinSection) {
   const start = () => (USE_3D ? boot3D() : loadFrames());
   const arm = () => new IntersectionObserver((entries, io) => {
     if (entries.some((e) => e.isIntersecting)) { start(); io.disconnect(); }
-  }, { rootMargin: '80% 0%' }).observe(spinSection);
+  }, { rootMargin: USE_3D ? '160% 0%' : '80% 0%' }).observe(spinSection);
   if (document.readyState === 'complete') arm();
   else addEventListener('load', arm, { once: true });
 }
