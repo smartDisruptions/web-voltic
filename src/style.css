@@ -327,18 +327,28 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .spin-caption p { color: var(--dim); margin-top: 10px; }
 
-/* the flip-side card — real, legible English facts synced to the back view */
-.spin-caption--facts {
-  text-align: left;
-  max-width: 320px;
-  background: color-mix(in srgb, var(--ink) 82%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+/* the flip-side card — the can fades out and this takes the stage */
+.spin-card {
+  position: absolute; z-index: 5;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  width: min(430px, 88vw);
+  background: color-mix(in srgb, var(--ink) 84%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 20px 22px 16px;
+  border-radius: 12px;
+  padding: 28px 30px 22px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 60px rgba(47, 216, 245, 0.06);
+  will-change: transform, opacity;
 }
-.spin-caption--facts h2 { font-size: clamp(30px, 3vw, 44px); }
+.spin-card h2 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(38px, 4.5vw, 56px); line-height: 0.95;
+  margin-top: 12px;
+}
 .facts { margin-top: 12px; border-top: 2px solid var(--paper); }
 .facts > div {
   display: flex; justify-content: space-between; align-items: baseline; gap: 18px;
@@ -556,6 +566,11 @@ img { max-width: 100%; height: auto; display: block; }
   .spin { height: auto; }
   .spin-stage { position: relative; }
   .spin-caption { position: relative; opacity: 1; transform: none; inset: auto; margin: 20px; }
+  .spin-card {
+    position: relative; left: auto; top: auto;
+    transform: none !important; opacity: 1 !important;
+    pointer-events: auto; margin: 30px auto;
+  }
   .clip-reveal { clip-path: none; }
   [data-speed], [data-depth], [data-inner-speed] { transform: none !important; }
 }

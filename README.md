@@ -8,9 +8,12 @@ then the site was built around the assets.
 
 - **Layered hero** — glow fields, ghost wordmark, can, and three droplet planes
   moving at different scroll speeds *and* tracking the pointer at different depths.
-- **Scroll-scrubbed 360°** — a pinned section that maps scroll progress onto 60
-  frames extracted from a generated turntable video (Apple-product-page style),
-  with a live degree readout and step captions.
+- **Scroll-scrubbed turn + flip** — a pinned section that maps scroll progress
+  onto frames from a generated turntable video (Apple-product-page style) with
+  a live degree readout; the can dissolves mid-turn and a nutrition-facts card
+  takes the stage. The arc stops at ~135° deliberately: video models cannot
+  render legible micro-text, so the can's generated back panel never faces the
+  camera — the facts are real DOM typography instead.
 - **Full-bleed image parallax** — the splash and trio photos drift slower than
   the page inside overflow-hidden frames.
 - **Scroll-scrubbed clip reveal** — the macro shot unmasks as it enters.
@@ -29,10 +32,10 @@ static page.
 one hero can (nano-banana-2), a 5s turntable video from that exact image
 (kling-2.6 image-to-video) sliced to 60 JPEG frames with ffmpeg, three
 photoreal stills referencing the same can, and the droplet plate.
-Total spend: **229 credits** (200 budget + a Josh-approved 50 extension for the
-English back panel: video models can't render legible micro-text, so the back's
-nutrition facts come from a nano-banana still that the 360° scrub dips to across
-the readable arc).
+Total spend: **229 credits** (200 budget + a Josh-approved 50 extension spent
+learning that no seeding strategy gets a video model to render both a faithful
+front and legible back micro-text — which is why the spin section flips to a
+typographic facts card instead of ever showing the generated back).
 
 ## Dev
 

@@ -81,26 +81,17 @@ const frames = new Array(FRAMES);
 const degEl = document.querySelector('.spin-deg-num');
 const fillEl = document.querySelector('.spin-track-fill');
 const captions = [...document.querySelectorAll('.spin-caption')];
-let spinTop = 0, spinRange = 1, spinLoaded = false, lastFrame = -1, lastStep = -1, lastAlpha = 0;
+let spinTop = 0, spinRange = 1, spinLoaded = false, lastFrame = -1, lastStep = -1;
 
-// The generated video can't render legible micro-text, so near 180° the canvas
-// crossfades to a nano-banana still of the back with a real English nutrition
-// panel. The still was generated from frame f31 but re-framed the can, so it
-// draws at a measured rect that makes both can silhouettes coincide
-// (canvas bitmap 720×1072, still 800×1192).
-const backStill = new Image();
-const STILL_RECT = [114, 134, 489, 938];
-// Crossfading misregistered content ghosts, so the handoff dips through dark:
-// video frame fades out, the English still fades in, holds across the whole
-// readable arc, then hands back. Returns [frameAlpha, stillAlpha].
-function backBlend(deg) {
-  if (deg <= 148 || deg >= 222) return [1, 0];
-  if (deg < 156) return [(156 - deg) / 8, 0];
-  if (deg < 164) return [0, (deg - 156) / 8];
-  if (deg <= 206) return [0, 1];
-  if (deg <= 214) return [0, (214 - deg) / 8];
-  return [(deg - 214) / 8, 0];
-}
+// The scrub has two acts: the can turns 0→150° (stopping before the video's
+// unusable back panel would face the camera), then fades down and the
+// nutrition card takes the stage. All thresholds are section progress 0–1.
+const SPIN_END = 0.55;   // rotation completes here
+const FADE_START = 0.5;  // can starts dissolving while still turning
+const FADE_END = 0.64;   // canvas fully faded here
+const CARD_IN = 0.62, CARD_FULL = 0.78;
+const ARC_DEG = 135;
+const cardEl = document.querySelector('.spin-card');
 
 function measureSpin() {
   if (!spinSection) return;
@@ -111,8 +102,6 @@ function measureSpin() {
 function loadFrames() {
   if (spinLoaded || !FRAMES) return;
   spinLoaded = true;
-  backStill.src = '/img/back-panel.jpg';
-  backStill.decode?.().catch(() => {});
   // coarse pass first (every 4th frame) so scrubbing works almost immediately,
   // then the fill pass sharpens it
   const order = [];
@@ -126,7 +115,7 @@ function loadFrames() {
       if (i === 0) {
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
-        drawFrame(0, 1, 0, true);
+        drawFrame(0, true);
       }
     };
     frames[i] = img;
@@ -141,32 +130,40 @@ function nearestLoaded(n) {
   return null;
 }
 
-function drawFrame(n, fa = 1, sa = 0, force = false) {
-  if (!ctx || (!force && n === lastFrame && fa + sa * 1000 === lastAlpha)) return;
+function drawFrame(n, force = false) {
+  if (!ctx || (!force && n === lastFrame)) return;
   const img = nearestLoaded(n);
   if (!img) return;
   lastFrame = n;
-  lastAlpha = fa + sa * 1000;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (fa > 0) {
-    ctx.globalAlpha = fa;
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  }
-  if (sa > 0 && backStill.complete && backStill.naturalWidth) {
-    ctx.globalAlpha = sa;
-    ctx.drawImage(backStill, ...STILL_RECT);
-  }
-  ctx.globalAlpha = 1;
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 }
 
 function updateSpin() {
   if (!spinSection) return;
   const p = clamp01((state.smoothY - spinTop) / spinRange);
-  const [fa, sa] = backBlend(p * 360).map((v) => Math.round(v * 40) / 40);
-  drawFrame(Math.round(p * (FRAMES - 1)), fa, sa);
-  if (degEl) degEl.textContent = String(Math.round(p * 360)).padStart(3, '0');
+  const pr = clamp01(p / SPIN_END);
+  drawFrame(Math.round(pr * (FRAMES - 1)));
+
+  // act 1 → act 2: can (and its degree readout) dissolve while still turning
+  const canA = p <= FADE_START ? 1 : clamp01(1 - (p - FADE_START) / (FADE_END - FADE_START));
+  canvas.style.opacity = canA;
+  if (degEl) {
+    degEl.textContent = String(Math.round(pr * ARC_DEG)).padStart(3, '0');
+    degEl.parentElement.style.opacity = canA;
+  }
   if (fillEl) fillEl.style.width = `${p * 100}%`;
-  const step = p < 1 / 3 ? 0 : p < 2 / 3 ? 1 : 2;
+
+  if (cardEl) {
+    const a = clamp01((p - CARD_IN) / (CARD_FULL - CARD_IN));
+    const e = 1 - Math.pow(1 - a, 3);
+    cardEl.style.opacity = e;
+    cardEl.style.transform =
+      `translate(-50%, -50%) translateY(${(1 - e) * 48}px) scale(${0.94 + e * 0.06})`;
+    cardEl.style.pointerEvents = a > 0.5 ? 'auto' : 'none';
+  }
+
+  const step = p < 0.28 ? 0 : p < SPIN_END ? 1 : -1;
   if (step !== lastStep) {
     lastStep = step;
     captions.forEach((c, i) => c.classList.toggle('is-live', i === step));
