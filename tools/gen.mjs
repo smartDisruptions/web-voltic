@@ -18,7 +18,7 @@ import { KieClient, SpendLedger, download } from './kie.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const RAW = join(ROOT, 'assets', 'raw');
 const MANIFEST = join(RAW, 'manifest.json');
-const CEILING = 230; // Josh approved ~50 more on 2026-08-25 for the English-back spin rerun
+const CEILING = 529; // 229 spent + Josh-approved 300 (2026-08-25) for the pinned-frames 360 rebuild
 
 // Key lives in asset-forge/.env — single source, never copied into this repo.
 const envFile = join(ROOT, '..', 'asset-forge', '.env');
@@ -169,6 +169,77 @@ const cmds = {
     const f = join(RAW, 'backpanel.png');
     await download(r.urls[0], f);
     save('backpanel', r, f);
+  },
+
+  // Proportion-matched back plate: both references go in so the back anchor
+  // has exactly the hero can's shape — mismatched anchors make the video morph.
+  async backplate2() {
+    const r = await kie.generate({
+      model: 'nano-banana-2',
+      input: {
+        prompt:
+          'Image 1 shows the front of a slim matte black energy drink can. Produce the BACK view ' +
+          'of that exact can, photographed after a half turn: the same slim tall can, the same ' +
+          'physical object. COMPOSITION MUST MATCH IMAGE 1 EXACTLY: the can occupies the same ' +
+          'small fraction of the frame as in image 1, with the same generous empty dark ' +
+          'background margins above, below, left and right, same camera distance, same eye-level ' +
+          'angle, same glossy black surface and reflection, same lighting, same condensation. ' +
+          'On the back of the can, in crisp thin white print (style like image 2): a boxed panel ' +
+          'headed "NUTRITION FACTS" with exactly these lines and no others: "Serving 473ml", ' +
+          '"Calories 5", "Total Sugars 0g", "Caffeine 200mg", "Taurine 1000mg", ' +
+          '"L-Theanine 100mg", "Niacin B3 16mg", "Vitamin B6 1.7mg", "Vitamin B12 2.4mcg", ' +
+          '"Sodium 105mg", "Potassium 70mg", plus a white barcode below the panel. All text in ' +
+          'perfect English, sharp and legible. No VOLTIC wordmark visible from this angle.',
+        aspect_ratio: '2:3',
+        image_urls: [
+          'https://web-voltic.vercel.app/img/hero-can.jpg',
+          'https://web-voltic.vercel.app/img/ref-back.jpg',
+        ],
+      },
+      label: 'backplate2',
+      estimate: 10,
+    });
+    const f = join(RAW, 'backplate2.png');
+    await download(r.urls[0], f);
+    save('backplate2', r, f);
+  },
+
+  // Pinned half-turns on kling-3.0: both endpoints are real photos, so the
+  // model only invents the textless side views. Run as `spin3 A` / `spin3 B`.
+  async spin3() {
+    const half = process.argv[3];
+    // 9:16-padded anchors — kling-3.0 only supports 16:9 / 9:16 / 1:1, and the
+    // native 2:3 anchors made the provider 500; extraction crops the pad away
+    const FRONT = 'https://web-voltic.vercel.app/img/ref-front-916.jpg';
+    const BACK = 'https://web-voltic.vercel.app/img/ref-back-916.jpg';
+    const ends = half === 'A' ? [FRONT, BACK] : half === 'B' ? [BACK, FRONT] : null;
+    if (!ends) throw new Error('usage: gen.mjs spin3 <A|B>');
+    const r = await kie.generate({
+      model: 'kling-3.0/video',
+      input: {
+        prompt:
+          'Locked-off studio product turntable shot. The camera does not move at all. The matte ' +
+          'black energy drink can rotates smoothly about its own vertical axis at perfectly ' +
+          'constant speed, turning exactly 180 degrees from the orientation in the first frame ' +
+          'to the orientation in the last frame. The visible surface of the can glides steadily ' +
+          'from right to left throughout. The printed label stays crisp and glides around the ' +
+          'cylinder naturally. Lighting, dark background, floor reflection and condensation ' +
+          'droplets stay constant. Nothing else moves, nothing else in frame.',
+        image_urls: ends,
+        duration: '5',
+        aspect_ratio: '9:16',
+        mode: 'pro',
+        sound: false,
+        multi_shots: false,
+        multi_prompt: [],
+        kling_elements: [],
+      },
+      label: `spin3-${half}`,
+      estimate: 135,
+    });
+    const f = join(RAW, `spin3-${half}.mp4`);
+    await download(r.urls[0], f);
+    save(`spin3-${half}`, r, f);
   },
 
   async droplets() {

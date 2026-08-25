@@ -89,14 +89,14 @@ const fillEl = document.querySelector('.spin-track-fill');
 const captions = [...document.querySelectorAll('.spin-caption')];
 let spinTop = 0, spinRange = 1, spinLoaded = false, lastFrame = -1, lastStep = -1;
 
-// The scrub has two acts: the can turns 0→150° (stopping before the video's
-// unusable back panel would face the camera), then fades down and the
-// nutrition card takes the stage. All thresholds are section progress 0–1.
-const SPIN_END = 0.55;   // rotation completes here
-const FADE_START = 0.5;  // can starts dissolving while still turning
-const FADE_END = 0.64;   // canvas fully faded here
-const CARD_IN = 0.62, CARD_FULL = 0.78;
-const ARC_DEG = 135;
+// Two acts: a 180° turn — one flawless Veo clip played in reverse, pinned to
+// the real front photo at 0° and the real English back panel at 180° — then
+// the can holds its back to the camera while the nutrition card lands.
+const SPIN_END = 0.55;   // rotation completes here, resting on the back anchor
+const FADE_START = 0.66; // …dwells on the readable back panel, then dissolves
+const FADE_END = 0.76;   // canvas fully faded here
+const CARD_IN = 0.74, CARD_FULL = 0.86;
+const ARC_DEG = 180;
 const cardEl = document.querySelector('.spin-card');
 
 function measureSpin() {
@@ -187,7 +187,7 @@ function updateSpin() {
     }
   }
 
-  const step = p < 0.28 ? 0 : p < SPIN_END ? 1 : -1;
+  const step = p < 0.31 ? 0 : p < SPIN_END ? 1 : -1;
   if (step !== lastStep) {
     lastStep = step;
     captions.forEach((c, i) => c.classList.toggle('is-live', i === step));

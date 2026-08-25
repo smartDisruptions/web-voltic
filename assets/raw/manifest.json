@@ -1,5 +1,5 @@
 {
-  "spent": 229,
+  "spent": 485,
   "results": {
     "hero": {
       "url": "https://tempfile.aiquickdraw.com/ggc/2f45ebe81bd0afd96de72068ca4d2fda_1787670951916.jpeg",
@@ -42,6 +42,30 @@
       "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/backpanel.png",
       "credits": 8,
       "taskId": "cb9ba1da5af8a4d8452649a0502248ca"
+    },
+    "backplate2": {
+      "url": "https://tempfile.aiquickdraw.com/a2/ceeacee0a4cf7a9b25d8956355bbfe62_1787686987366.png",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/backplate2.png",
+      "credits": 8,
+      "taskId": "ceeacee0a4cf7a9b25d8956355bbfe62"
+    },
+    "spin3-A": {
+      "url": "https://tempfile.aiquickdraw.com/v/85edc57395ebf401581874867c2ad67c_1787687726.mp4",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/spin3-A.mp4",
+      "credits": 60,
+      "taskId": "85edc57395ebf401581874867c2ad67c"
+    },
+    "spin3-B": {
+      "url": "https://tempfile.aiquickdraw.com/v/f7d1740f95ce31f51a63eb6450bfda0d_1787687495.mp4",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/spin3-B.mp4",
+      "credits": 60,
+      "taskId": "f7d1740f95ce31f51a63eb6450bfda0d"
+    },
+    "spin3-C": {
+      "url": "https://tempfile.aiquickdraw.com/v/bfadb63143df58e1d727a7bdd345f8c6_1787687934.mp4",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/spin3-C.mp4",
+      "credits": 60,
+      "taskId": "bfadb63143df58e1d727a7bdd345f8c6"
     }
   }
 }
