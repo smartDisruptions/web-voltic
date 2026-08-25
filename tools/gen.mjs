@@ -171,6 +171,42 @@ const cmds = {
     save('backpanel', r, f);
   },
 
+  // Surgical edit of the hero photo itself: same scene, same lighting, same
+  // silhouette — ONLY the label changes. Generating a fresh back scene (the
+  // previous approach) produced a second photoshoot that read as a second can.
+  async backedit() {
+    const r = await kie.generate({
+      model: 'nano-banana-2',
+      input: {
+        prompt:
+          'Edit this photograph. Keep EVERYTHING identical: the exact same camera position, the ' +
+          'same dark charcoal background, the same glossy black floor and its reflection, the ' +
+          'same cyan rim light on the left edge of the can and lime rim light on the right edge, ' +
+          'the same silver top and pull tab, the same can silhouette at exactly the same size ' +
+          'and position, the same condensation droplets. Change ONLY the printed label: the can ' +
+          'has been turned around, so instead of the glowing VOLTIC wordmark we now see its ' +
+          'plain back — matte black with a boxed panel in crisp thin white print headed ' +
+          '"NUTRITION FACTS" with exactly these lines: "Serving 473ml", "Calories 5", ' +
+          '"Total Sugars 0g", "Caffeine 200mg", "Taurine 1000mg", "L-Theanine 100mg", ' +
+          '"Niacin B3 16mg", "Vitamin B6 1.7mg", "Vitamin B12 2.4mcg", "Sodium 105mg", ' +
+          '"Potassium 70mg", and a white barcode below it. No glowing letters, no lightning ' +
+          'bolt, no VOLTIC wordmark anywhere. The rim lights still catch the can edges exactly ' +
+          'as before. CRITICAL COMPOSITION RULE: do NOT zoom in and do NOT raise the camera — ' +
+          'the can must occupy exactly the same small area of the frame as in the original, ' +
+          'with the same wide dark margins on all sides, photographed at eye level so the top ' +
+          'of the can is seen almost edge-on: we must NOT look down into the lid. Same tiny ' +
+          'sliver of silver top and pull tab as the original.',
+        aspect_ratio: '2:3',
+        image_urls: ['https://web-voltic.vercel.app/img/hero-can.jpg'],
+      },
+      label: 'backedit',
+      estimate: 10,
+    });
+    const f = join(RAW, 'backedit.png');
+    await download(r.urls[0], f);
+    save('backedit', r, f);
+  },
+
   // Proportion-matched back plate: both references go in so the back anchor
   // has exactly the hero can's shape — mismatched anchors make the video morph.
   async backplate2() {

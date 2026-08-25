@@ -29,10 +29,10 @@ const BACK = 'https://web-voltic.vercel.app/img/ref-back-916.jpg';
 const ends = half === 'A' ? [FRONT, BACK] : half === 'B' || half === 'C' ? [BACK, FRONT] : null;
 if (!ends) { console.error('usage: veo-spin.mjs <A|B|C>'); process.exit(1); }
 
-// same 529-credit ceiling the ledgered runner enforces
+// ceiling 565: Josh approved ~35 past the prior 529 for the matched-anchor clip
 const spentSoFar = JSON.parse(readFileSync(MANIFEST, 'utf8')).spent;
-if (spentSoFar + 80 > 529) {
-  console.error(`ceiling: ${spentSoFar} spent, a ~80cr clip would breach 529`);
+if (spentSoFar + 62 > 565) {
+  console.error(`ceiling: ${spentSoFar} spent, a ~60cr clip would breach 565`);
   process.exit(1);
 }
 
