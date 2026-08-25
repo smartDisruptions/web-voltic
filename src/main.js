@@ -108,15 +108,11 @@ function measureSpin() {
 function loadFrames() {
   if (spinLoaded || !FRAMES) return;
   spinLoaded = true;
-  // coarse pass first (every 4th frame) so scrubbing works almost immediately,
-  // then the fill pass sharpens it
-  const order = [];
-  for (let i = 0; i < FRAMES; i += 4) order.push(i);
-  for (let i = 0; i < FRAMES; i++) if (i % 4) order.push(i);
-  for (const i of order) {
+  // coarse pass first (every 4th frame) so scrubbing works almost immediately;
+  // the fill pass trickles in at idle so it never blocks the main thread
+  const load = (i) => {
     const img = new Image();
     img.src = `/frames/f${String(i + 1).padStart(2, '0')}.webp`;
-    img.decode?.().catch(() => {});
     img.onload = () => {
       if (i === 0) {
         canvas.width = img.naturalWidth;
@@ -125,7 +121,16 @@ function loadFrames() {
       }
     };
     frames[i] = img;
-  }
+  };
+  for (let i = 0; i < FRAMES; i += 4) load(i);
+  const fill = [];
+  for (let i = 0; i < FRAMES; i++) if (i % 4) fill.push(i);
+  const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
+  const trickle = () => {
+    fill.splice(0, 3).forEach(load);
+    if (fill.length) idle(trickle, { timeout: 400 });
+  };
+  idle(trickle, { timeout: 800 });
 }
 
 function nearestLoaded(n) {
@@ -189,11 +194,14 @@ function updateSpin() {
   }
 }
 
-// start pulling frames when the spin section is two screens away
+// start pulling frames when the spin section is approaching — but never
+// before the page itself has finished loading
 if (spinSection) {
-  new IntersectionObserver((entries, io) => {
+  const arm = () => new IntersectionObserver((entries, io) => {
     if (entries.some((e) => e.isIntersecting)) { loadFrames(); io.disconnect(); }
-  }, { rootMargin: '200% 0%' }).observe(spinSection);
+  }, { rootMargin: '80% 0%' }).observe(spinSection);
+  if (document.readyState === 'complete') arm();
+  else addEventListener('load', arm, { once: true });
 }
 
 // ── marquee ──────────────────────────────────────────────────────────────
