@@ -1,5 +1,5 @@
 {
-  "spent": 561,
+  "spent": 577,
   "results": {
     "hero": {
       "url": "https://tempfile.aiquickdraw.com/ggc/2f45ebe81bd0afd96de72068ca4d2fda_1787670951916.jpeg",
@@ -72,6 +72,18 @@
       "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/backedit.png",
       "credits": 8,
       "taskId": "60e1d173ad0be1a4ac6d3d8e046b2af8"
+    },
+    "flank-90": {
+      "url": "https://tempfile.aiquickdraw.com/as/4d3133d9a97fb54110c890bf1faf865c_1787694472795.jpeg",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/flank-90.png",
+      "credits": 8,
+      "taskId": "4d3133d9a97fb54110c890bf1faf865c"
+    },
+    "flank-270": {
+      "url": "https://tempfile.aiquickdraw.com/a2/0c497dad98254a85275b0c41e529b064_1787694555812.png",
+      "file": "/Users/joshadmin/Documents/src/web-voltic/assets/raw/flank-270.png",
+      "credits": 8,
+      "taskId": "0c497dad98254a85275b0c41e529b064"
     }
   }
 }

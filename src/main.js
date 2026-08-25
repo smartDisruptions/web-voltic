@@ -96,8 +96,34 @@ const SPIN_END = 0.55;   // rotation completes here, resting on the back anchor
 const FADE_START = 0.66; // …dwells on the readable back panel, then dissolves
 const FADE_END = 0.76;   // canvas fully faded here
 const CARD_IN = 0.74, CARD_FULL = 0.86;
-const ARC_DEG = 180;
+let ARC_DEG = 180;
 const cardEl = document.querySelector('.spin-card');
+
+// ── ?can3d=1: real-time three.js can instead of scrubbed frames ──────────
+// Full 360° with an eased dwell at 180° so the back panel gets read time.
+const USE_3D = new URLSearchParams(location.search).has('can3d');
+let can3d = null;
+function angle360(pr) {
+  // slows to ~25% speed around the back, quicker through the flanks
+  return 360 * (pr + 0.115 * Math.sin(2 * Math.PI * pr));
+}
+async function boot3D() {
+  try {
+    const { createCan3D } = await import('./can3d.js');
+    const host = document.createElement('div');
+    host.className = 'spin-3d';
+    canvas.parentElement.insertBefore(host, canvas);
+    canvas.style.display = 'none';
+    can3d = createCan3D(host);
+    ARC_DEG = 360;
+    document.querySelector('.spin-ghost').textContent = '360°';
+    addEventListener('resize', () => can3d.resize());
+    lastFrame = -2; // force a state push
+  } catch (e) {
+    console.warn('3D can unavailable, keeping frames:', e);
+    loadFrames();
+  }
+}
 
 function measureSpin() {
   if (!spinSection) return;
@@ -156,18 +182,23 @@ function updateSpin() {
   if (!spinSection) return;
   const p = clamp01((state.smoothY - spinTop) / spinRange);
   const pr = clamp01(p / SPIN_END);
-  drawFrame(Math.round(pr * (FRAMES - 1)));
+  if (can3d) {
+    can3d.setAngle(angle360(pr));
+    can3d.render();
+  } else {
+    drawFrame(Math.round(pr * (FRAMES - 1)));
+  }
 
   // act 1 → act 2: can (and its degree readout) dissolve while still turning
   const canA = Math.round((p <= FADE_START ? 1
     : clamp01(1 - (p - FADE_START) / (FADE_END - FADE_START))) * 100) / 100;
   if (canA !== lastCanA) {
     lastCanA = canA;
-    canvas.style.opacity = canA;
+    (can3d ? canvas.previousElementSibling : canvas).style.opacity = canA;
     if (degEl) degEl.parentElement.style.opacity = canA;
   }
   if (degEl) {
-    const deg = String(Math.round(pr * ARC_DEG)).padStart(3, '0');
+    const deg = String(Math.round(can3d ? angle360(pr) : pr * ARC_DEG)).padStart(3, '0');
     if (deg !== lastDeg) { lastDeg = deg; degEl.textContent = deg; }
   }
   if (fillEl) {
@@ -194,11 +225,12 @@ function updateSpin() {
   }
 }
 
-// start pulling frames when the spin section is approaching — but never
-// before the page itself has finished loading
+// start pulling the spin's assets when the section is approaching — but
+// never before the page itself has finished loading
 if (spinSection) {
+  const start = () => (USE_3D ? boot3D() : loadFrames());
   const arm = () => new IntersectionObserver((entries, io) => {
-    if (entries.some((e) => e.isIntersecting)) { loadFrames(); io.disconnect(); }
+    if (entries.some((e) => e.isIntersecting)) { start(); io.disconnect(); }
   }, { rootMargin: '80% 0%' }).observe(spinSection);
   if (document.readyState === 'complete') arm();
   else addEventListener('load', arm, { once: true });
@@ -260,7 +292,8 @@ function tick() {
   if (Math.abs(state.my - state.smy) < 0.0005) state.smy = state.my;
 
   const active = state.smoothY !== state.y || state.vel !== 0 ||
-    state.smx !== state.mx || state.smy !== state.my;
+    state.smx !== state.mx || state.smy !== state.my ||
+    (can3d ? can3d.isDragging() : false);
 
   if (active || wasActive) writeParallax();
   wasActive = active;

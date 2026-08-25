@@ -336,6 +336,15 @@ img { max-width: 100%; height: auto; display: block; }
   border-radius: 10px;
 }
 
+/* the ?can3d=1 live-rendered can occupies the same slot; drag to spin */
+.spin-3d {
+  position: relative; z-index: 3;
+  height: min(78svh, 900px);
+  aspect-ratio: 2 / 3;
+  cursor: grab;
+}
+.spin-3d:active { cursor: grabbing; }
+
 .spin-hud {
   position: absolute; z-index: 4;
   bottom: 5svh; left: 50%; translate: -50% 0;

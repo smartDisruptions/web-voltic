@@ -1,0 +1,81 @@
+<!doctype html>
+<!-- Cylinder-unwrap label texture: 2048px = full 360° circumference.
+     Front face centered at x=512 (u=0.25), back panel at x=1536 (u=0.75),
+     so the UV seam lands on a blank flank. Rendered by tools/make-label.mjs
+     into label.png (albedo) and glow.png (emissive: wordmark only). -->
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Anton'; src: url('../public/fonts/anton-400.woff2') format('woff2'); }
+  @font-face { font-family: 'Archivo'; font-weight: 400; src: url('../public/fonts/archivo-400.woff2') format('woff2'); }
+  @font-face { font-family: 'Archivo'; font-weight: 700; src: url('../public/fonts/archivo-700.woff2') format('woff2'); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 2048px; height: 1600px; background: #101314; position: relative; overflow: hidden;
+         font-family: Archivo, sans-serif; }
+
+  /* ── front: vertical wordmark ── */
+  .front { position: absolute; left: 0; top: 0; width: 1024px; height: 1600px; }
+  .bolt { position: absolute; left: 512px; top: 120px; transform: translateX(-50%); }
+  .wordmark {
+    position: absolute; left: 512px; top: 870px;
+    transform: translate(-50%, -50%) rotate(90deg);
+    font-family: Anton; font-size: 300px; letter-spacing: 0.02em;
+    background: linear-gradient(90deg, #2fd8f5 8%, #7de37d 55%, #b7e93c 92%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    white-space: nowrap;
+  }
+  .tagline {
+    position: absolute; left: 512px; bottom: 68px; transform: translateX(-50%);
+    font-family: Archivo; font-weight: 700; font-size: 34px; letter-spacing: 0.42em;
+    color: #b9c4c9; white-space: nowrap;
+  }
+
+  /* ── back: nutrition panel + barcode ── */
+  .back { position: absolute; left: 1024px; top: 0; width: 1024px; height: 1600px; }
+  .panel {
+    position: absolute; left: 512px; top: 190px; transform: translateX(-50%);
+    width: 560px; border: 5px solid #eef2f4; padding: 26px 30px 20px; color: #eef2f4;
+  }
+  .panel h1 { font-family: Archivo; font-weight: 700; font-size: 52px; letter-spacing: 0.01em;
+              border-bottom: 5px solid #eef2f4; padding-bottom: 12px; margin-bottom: 6px; }
+  .panel .row { display: flex; justify-content: space-between; font-size: 33px; line-height: 1.0;
+                padding: 11px 0; border-bottom: 2px solid rgba(238,242,244,0.55); }
+  .panel .row:last-child { border-bottom: none; }
+  .panel .row b { font-weight: 700; }
+  .barcode { position: absolute; left: 512px; top: 1130px; transform: translateX(-50%);
+             width: 470px; height: 230px; background: #eef2f4; padding: 18px 26px 44px; }
+  .bars { height: 100%; background: repeating-linear-gradient(90deg,
+            #101314 0 6px, transparent 6px 10px, #101314 10px 13px, transparent 13px 21px,
+            #101314 21px 24px, transparent 24px 30px, #101314 30px 38px, transparent 38px 42px); }
+  .digits { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center;
+            font-family: Archivo; font-weight: 400; font-size: 28px; color: #101314; letter-spacing: 0.18em; }
+
+  /* glow pass: only the emissive artwork stays, on pure black */
+  body.glow { background: #000; }
+  body.glow .panel, body.glow .barcode, body.glow .tagline { visibility: hidden; }
+</style>
+<body>
+  <div class="front">
+    <svg class="bolt" width="150" height="210" viewBox="0 0 32 42">
+      <path d="M18 1 5 24h8l-3 16L27 14h-8l4-13z" fill="#2fd8f5"/>
+    </svg>
+    <div class="wordmark">VOLTIC</div>
+    <div class="tagline">LIQUID LIGHTNING · ENERGY</div>
+  </div>
+  <div class="back">
+    <div class="panel">
+      <h1>NUTRITION FACTS</h1>
+      <div class="row"><b>Serving</b><span>473ml</span></div>
+      <div class="row"><b>Calories</b><span>5</span></div>
+      <div class="row"><b>Total Sugars</b><span>0g</span></div>
+      <div class="row"><b>Caffeine</b><span>200mg</span></div>
+      <div class="row"><b>Taurine</b><span>1000mg</span></div>
+      <div class="row"><b>L-Theanine</b><span>100mg</span></div>
+      <div class="row"><b>Niacin B3</b><span>16mg</span></div>
+      <div class="row"><b>Vitamin B6</b><span>1.7mg</span></div>
+      <div class="row"><b>Vitamin B12</b><span>2.4mcg</span></div>
+      <div class="row"><b>Sodium</b><span>105mg</span></div>
+      <div class="row"><b>Potassium</b><span>70mg</span></div>
+    </div>
+    <div class="barcode"><div class="bars"></div><div class="digits">8 21712 00202 9</div></div>
+  </div>
+</body>

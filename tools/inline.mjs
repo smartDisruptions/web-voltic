@@ -11,14 +11,26 @@ const DIST = join(import.meta.dirname, '..', 'dist');
 const htmlPath = join(DIST, 'index.html');
 let html = readFileSync(htmlPath, 'utf8');
 
-html = html.replace(/<link rel="stylesheet"[^>]*href="\/(assets\/[^"]+\.css)"[^>]*>/, (m, path) =>
-  `<style>${readFileSync(join(DIST, path), 'utf8').trim()}</style>`);
+html = html.replace(/<link rel="stylesheet"[^>]*href="\/(assets\/[^"]+\.css)"[^>]*>/, (m, path) => {
+  const css = readFileSync(join(DIST, path), 'utf8').trim();
+  rmSync(join(DIST, path), { force: true });
+  return `<style>${css}</style>`;
+});
 
-html = html.replace(/<script type="module"[^>]*src="\/(assets\/[^"]+\.js)"[^>]*><\/script>/, (m, path) =>
-  `<script type="module">${readFileSync(join(DIST, path), 'utf8').trim()}</script>`);
+let entry = null;
+html = html.replace(/<script type="module"[^>]*src="\/(assets\/[^"]+\.js)"[^>]*><\/script>/, (m, path) => {
+  entry = path;
+  // the entry now lives inline at the document root, so its relative dynamic
+  // imports must become absolute /assets/ paths
+  const js = readFileSync(join(DIST, path), 'utf8').trim()
+    .replaceAll('"./', '"/assets/').replaceAll("'./", "'/assets/");
+  return `<script type="module">${js}</script>`;
+});
+// drop any preload hints for the inlined entry; lazy chunks (the 3D can) stay
+// as real files in dist/assets and load on demand
+if (entry) html = html.replaceAll(`<link rel="modulepreload" crossorigin href="/${entry}">`, '');
+rmSync(join(DIST, entry), { force: true });
 
-if (html.includes('/assets/')) throw new Error('an asset reference survived inlining');
 writeFileSync(htmlPath, html);
-rmSync(join(DIST, 'assets'), { recursive: true });
-console.log(`inlined → index.html ${(html.length / 1024).toFixed(1)}KB, assets/ removed`);
-console.log('dist:', readdirSync(DIST).join(' '));
+const chunks = readdirSync(join(DIST, 'assets')).filter((f) => f.endsWith('.js'));
+console.log(`inlined → index.html ${(html.length / 1024).toFixed(1)}KB · lazy chunks kept: ${chunks.join(', ') || 'none'}`);

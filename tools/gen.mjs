@@ -18,7 +18,7 @@ import { KieClient, SpendLedger, download } from './kie.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const RAW = join(ROOT, 'assets', 'raw');
 const MANIFEST = join(RAW, 'manifest.json');
-const CEILING = 529; // 229 spent + Josh-approved 300 (2026-08-25) for the pinned-frames 360 rebuild
+const CEILING = 580; // Josh-approved increments through 2026-08-25; latest: +16 for the two flank keyframes
 
 // Key lives in asset-forge/.env — single source, never copied into this repo.
 const envFile = join(ROOT, '..', 'asset-forge', '.env');
@@ -205,6 +205,54 @@ const cmds = {
     const f = join(RAW, 'backedit.png');
     await download(r.urls[0], f);
     save('backedit', r, f);
+  },
+
+  // Flank keyframes for the 360 storyboard + clip gate: quarter-turn views
+  // where the label exits left and the English panel edge enters right (the
+  // rotation glides right-to-left on screen). Same scene-lock rules as the
+  // back edit. Usage: gen.mjs flank 90 | gen.mjs flank 270
+  async flank() {
+    const deg = process.argv[3];
+    const SCENE =
+      'Keep EVERYTHING else identical to image 1: same camera position and eye level, same ' +
+      'framing with the can occupying the same small area and wide dark margins, same dark ' +
+      'charcoal background, same glossy black floor with the can\'s reflection, same cyan rim ' +
+      'light on the left edge and lime rim light on the right edge, same silver top and pull ' +
+      'tab seen almost edge-on, same condensation droplets. The white boxed English NUTRITION ' +
+      'FACTS panel design is shown in image 2. ';
+    const prompts = {
+      '90':
+        'Image 1 shows the front of a slim matte black energy drink can. Produce the same can ' +
+        'rotated a QUARTER TURN: the glowing VOLTIC wordmark is now seen at a steep oblique ' +
+        'angle sliding off the LEFT edge of the can, letters heavily foreshortened, only ' +
+        'partially visible. On the RIGHT side of the can, the leading edge of the white boxed ' +
+        'English NUTRITION FACTS panel from image 2 is just beginning to curve into view — a ' +
+        'narrow foreshortened sliver only. ' + SCENE,
+      '270':
+        'Image 1 shows the front of a slim matte black energy drink can. Produce the same can ' +
+        'rotated THREE QUARTERS: the white boxed English NUTRITION FACTS panel and barcode ' +
+        'from image 2 are seen at a steep oblique angle sliding off the LEFT edge of the can, ' +
+        'heavily foreshortened, only partially visible. On the RIGHT side, the leading edge of ' +
+        'the glowing cyan-to-lime VOLTIC wordmark is just beginning to curve into view — a ' +
+        'narrow foreshortened sliver only. ' + SCENE,
+    };
+    if (!prompts[deg]) throw new Error('usage: gen.mjs flank <90|270>');
+    const r = await kie.generate({
+      model: 'nano-banana-2',
+      input: {
+        prompt: prompts[deg],
+        aspect_ratio: '2:3',
+        image_urls: [
+          'https://web-voltic.vercel.app/img/hero-can.jpg',
+          'https://web-voltic.vercel.app/img/anchor-back-49491eee.jpg',
+        ],
+      },
+      label: `flank-${deg}`,
+      estimate: 10,
+    });
+    const f = join(RAW, `flank-${deg}.png`);
+    await download(r.urls[0], f);
+    save(`flank-${deg}`, r, f);
   },
 
   // Proportion-matched back plate: both references go in so the back anchor
