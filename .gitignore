@@ -4,3 +4,5 @@ dist
 .DS_Store
 assets/raw/*.mp4
 assets/raw/*.png
+.vercel
+.env*
