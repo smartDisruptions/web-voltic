@@ -262,7 +262,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* ── 360° spin — pinned scrub ─────────────────────────────────────────── */
 
-.spin { height: 380vh; position: relative; }
+.spin { height: 250vh; position: relative; }
 
 .spin-stage {
   position: sticky; top: 0; height: 100svh;
@@ -496,6 +496,20 @@ img { max-width: 100%; height: auto; display: block; }
 
 @media (max-width: 640px) {
   .nav-links a:not(.nav-cta) { display: none; }
+
+  /* phones: stack the hero — can on top, copy below, no overlap */
+  .hero {
+    height: auto; min-height: 100svh;
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding-top: 76px; row-gap: 4px;
+  }
+  .hero > .hero-can-wrap { grid-area: 1 / 1; align-self: center; }
+  .hero > .hero-copy { grid-area: 2 / 1; align-self: end; }
+  .hero-can-wrap { width: clamp(180px, 50vw, 240px); }
+  .hero-ghost { font-size: 36vw; align-items: flex-start; padding-top: 16svh; }
+  .hero-copy { padding-bottom: 7svh; }
+  .hero-title { font-size: clamp(48px, 14.5vw, 64px); }
+  .scroll-cue { display: none; }
 }
 
 @media (max-width: 960px) {

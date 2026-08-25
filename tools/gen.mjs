@@ -72,8 +72,8 @@ const cmds = {
   },
 
   async spin() {
-    const hero = manifest.results.hero;
-    if (!hero) throw new Error('run hero first');
+    // reference the deployed asset — kie's own result URLs are short-lived
+    const heroUrl = 'https://web-voltic.vercel.app/img/hero-can.jpg';
     const r = await kie.generate({
       model: 'kling-2.6/image-to-video',
       input: {
@@ -81,13 +81,16 @@ const cmds = {
           'Studio product turntable shot. The camera is locked off and does not move. The energy ' +
           'drink can rotates smoothly and continuously about its own vertical axis, completing ' +
           'exactly one full 360 degree rotation at constant speed over the whole clip, ending at ' +
-          'the same orientation it started. The label design stays identical on all sides. ' +
+          'the same orientation it started. The large VOLTIC wordmark exists ONLY ONCE, on the ' +
+          'front face of the can — as the back of the can rotates into view it shows only a small ' +
+          'plain nutrition facts panel and a barcode in thin white print on the matte black metal. ' +
+          'Never duplicate the logo, never mirror the label. ' +
           'Lighting, background, reflections and condensation stay constant. Nothing else moves.',
-        image_urls: [hero.url],
+        image_urls: [heroUrl],
         sound: false,
         duration: '5',
       },
-      label: 'spin-360',
+      label: 'spin-360-v2',
       estimate: 60,
     });
     const f = join(RAW, 'spin.mp4');

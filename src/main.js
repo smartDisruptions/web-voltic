@@ -167,7 +167,7 @@ for (const card of document.querySelectorAll('[data-tilt]')) {
 // ── the loop ─────────────────────────────────────────────────────────────
 function tick() {
   const prev = state.smoothY;
-  state.smoothY = lerp(state.smoothY, state.y, 0.12);
+  state.smoothY = lerp(state.smoothY, state.y, 0.18);
   state.vel = state.smoothY - prev;
   state.smx = lerp(state.smx, state.mx, 0.06);
   state.smy = lerp(state.smy, state.my, 0.06);
