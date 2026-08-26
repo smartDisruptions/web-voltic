@@ -24,8 +24,9 @@ then the site was built around the assets.
   tiled at three scales, masked away from the subject.
 
 All motion is transform-only, driven by one rAF loop writing a `--plx` CSS
-variable, with cached layout reads. `prefers-reduced-motion` gets a fully
-static page.
+variable, with cached layout reads. **Deliberate policy:** this site exists to
+showcase motion, so `prefers-reduced-motion` is intentionally not honored —
+the regression suite asserts the animations still run under it.
 
 ## Asset pipeline
 

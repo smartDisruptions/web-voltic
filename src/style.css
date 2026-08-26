@@ -43,7 +43,6 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
   background: var(--ink);
@@ -617,20 +616,4 @@ img { max-width: 100%; height: auto; display: block; }
   .hero-can-wrap { width: clamp(200px, 44vw, 300px); }
 }
 
-/* ── reduced motion: everything static, everything visible ────────────── */
 
-@media (prefers-reduced-motion: reduce) {
-  .grain, .scroll-cue span { animation: none; }
-  .hero-can-wrap { animation: none; }
-  .reveal { opacity: 1; transform: none; transition: none; }
-  .spin { height: auto; }
-  .spin-stage { position: relative; }
-  .spin-caption { position: relative; opacity: 1; transform: none; inset: auto; margin: 20px; }
-  .spin-card {
-    position: relative; left: auto; top: auto;
-    transform: none !important; opacity: 1 !important;
-    pointer-events: auto; margin: 30px auto;
-  }
-  .clip-reveal { clip-path: none; }
-  [data-speed], [data-depth], [data-inner-speed] { transform: none !important; }
-}

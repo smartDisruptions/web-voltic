@@ -81,7 +81,7 @@ export function createCan3D(container) {
     roughnessMap: dropsRough,
     metalness: 0.12,
     bumpMap: dropsHeight,
-    bumpScale: 1.6,
+    bumpScale: 1.25,
     envMapIntensity: 0.3,
   });
   const darkMetal = new THREE.MeshStandardMaterial({ color: 0x15181a, roughness: 0.5, metalness: 0.6 });

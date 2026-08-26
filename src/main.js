@@ -16,7 +16,10 @@
  * Layout reads are cached on resize; the loop only writes transforms.
  */
 
-const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Deliberate choice (Josh, 2026-08-26): this site IS the animation showcase,
+// so prefers-reduced-motion is intentionally not honored — everyone gets the
+// full experience.
+const motionOK = true;
 const vp = { w: innerWidth, h: innerHeight };
 
 // ── scroll + pointer state ───────────────────────────────────────────────
@@ -102,7 +105,7 @@ const cardEl = document.querySelector('.spin-card');
 // ── the real-time three.js can is the default experience ─────────────────
 // Full 360° with an eased dwell at 180° so the back panel gets read time.
 // ?classic=1 forces the scrubbed-frames version; WebGL failures fall back
-// to it automatically, and reduced-motion users get the static frame.
+// to it automatically.
 const USE_3D = !new URLSearchParams(location.search).has('classic');
 let can3d = null;
 function angle360(pr) {
@@ -230,7 +233,7 @@ function updateSpin() {
 // start pulling the spin's assets when the section is approaching — but
 // never before the page itself has finished loading
 if (spinSection) {
-  const start = () => (USE_3D && motionOK ? boot3D() : loadFrames());
+  const start = () => (USE_3D ? boot3D() : loadFrames());
   const arm = () => new IntersectionObserver((entries, io) => {
     if (entries.some((e) => e.isIntersecting)) { start(); io.disconnect(); }
   }, { rootMargin: USE_3D ? '160% 0%' : '80% 0%' }).observe(spinSection);

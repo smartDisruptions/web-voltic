@@ -82,22 +82,30 @@ for (const [name, w, h] of [['mobile', 390, 844], ['landscape', 844, 390], ['wid
   await p.close();
 }
 
-// ── reduced motion: everything must render statically ────────────────────
+// ── reduced motion: the show MUST still run (deliberate site policy) ─────
+// Motion is this site's product, so prefers-reduced-motion is intentionally
+// not honored — this pass asserts the animations still play under it.
 {
   const p = await b.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   const errs = [];
   p.on('pageerror', (e) => errs.push(String(e)));
   await p.goto(URL, { waitUntil: 'networkidle' });
-  await p.waitForTimeout(1000);
+  await p.waitForTimeout(1500);
+  // scroll through the page so scroll-driven effects get their chance to fire
+  for (const f of [0.2, 0.5, 0.8, 1]) {
+    await p.evaluate((fr) => scrollTo({ top: (document.documentElement.scrollHeight - innerHeight) * fr, behavior: 'instant' }), f);
+    await p.waitForTimeout(900);
+  }
   const checks = await p.evaluate(() => ({
-    revealsVisible: [...document.querySelectorAll('.reveal')].every((el) => getComputedStyle(el).opacity === '1'),
-    cardVisible: getComputedStyle(document.querySelector('.spin-card')).opacity === '1',
-    counterFinal: document.querySelector('.count[data-count="200"]').textContent === '200',
+    revealsFired: [...document.querySelectorAll('.reveal')].filter((el) => el.classList.contains('is-in')).length > 10,
+    spinAlive: !!document.querySelector('.spin-3d canvas') || !!document.querySelector('.spin-canvas'),
+    cardShown: parseFloat(getComputedStyle(document.querySelector('.spin-card')).opacity) === 1,
+    counterRan: document.querySelector('.count[data-count="200"]').textContent === '200',
   }));
-  await p.screenshot({ path: join(OUT, 'reduced-motion.png'), fullPage: true });
-  for (const [k, v] of Object.entries(checks)) if (!v) failures.push(`reduced-motion: ${k} failed`);
+  await p.screenshot({ path: join(OUT, 'reduced-motion.png') });
+  for (const [k, v] of Object.entries(checks)) if (!v) failures.push(`forced-motion under reduce: ${k} failed`);
   if (errs.length) failures.push(`reduced-motion errors: ${errs.join(' | ')}`);
-  console.log('reduced-motion:', Object.entries(checks).map(([k, v]) => `${k}=${v}`).join(' '));
+  console.log('forced-motion under reduce:', Object.entries(checks).map(([k, v]) => `${k}=${v}`).join(' '));
   await p.close();
 }
 

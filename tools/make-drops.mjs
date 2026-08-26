@@ -20,11 +20,11 @@ const rand = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32;
 
 const drops = [];
 // fine mist: hundreds of tiny beads
-for (let i = 0; i < 900; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 1.2 + rand() * 2.6, run: 0 });
+for (let i = 0; i < 600; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 1.2 + rand() * 2.6, run: 0 });
 // medium beads
-for (let i = 0; i < 160; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 4 + rand() * 5, run: 0 });
+for (let i = 0; i < 105; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 4 + rand() * 5, run: 0 });
 // large drops, some with a short run-down trail
-for (let i = 0; i < 34; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 10 + rand() * 9, run: rand() < 0.45 ? 12 + rand() * 40 : 0 });
+for (let i = 0; i < 22; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 10 + rand() * 9, run: rand() < 0.45 ? 12 + rand() * 40 : 0 });
 
 // wrap duplicates so nothing clips at a tile edge
 const placed = [];
