@@ -25,10 +25,10 @@ scene.cycles.samples = SAMPLES
 scene.cycles.use_denoising = True
 scene.render.resolution_x = int(720 * SCALE)
 scene.render.resolution_y = int(1080 * SCALE)
-scene.render.film_transparent = False
+scene.render.film_transparent = True  # can floats on the page bg
 scene.view_settings.view_transform = 'AgX'
 scene.view_settings.look = 'AgX - Base Contrast'
-scene.view_settings.exposure = -0.35
+scene.view_settings.exposure = -0.6
 
 # ── world: near-black with a faint top glow ──────────────────────────────
 world = bpy.data.worlds.new('w'); scene.world = world
@@ -68,7 +68,7 @@ nt.links.new(label.outputs['Color'], p.inputs['Base Color'])
 nt.links.new(rough.outputs['Color'], p.inputs['Roughness'])
 nt.links.new(bump.outputs['Normal'], p.inputs['Normal'])
 nt.links.new(glow.outputs['Color'], p.inputs['Emission Color'])
-p.inputs['Emission Strength'].default_value = 1.1
+p.inputs['Emission Strength'].default_value = 0.95
 p.inputs['Metallic'].default_value = 0.12
 p.inputs['Coat Weight'].default_value = 0.08
 
@@ -158,6 +158,8 @@ fp.inputs['Roughness'].default_value = 0.24
 fp.inputs['Metallic'].default_value = 0.0
 fp.inputs['Specular IOR Level'].default_value = 0.55
 floor.data.materials.append(fm)
+# invisible in the frame, but still catches the can's shadow + reflection
+floor.is_shadow_catcher = True
 
 # ── the studio rig as real area lights ───────────────────────────────────
 target = bpy.data.objects.new('aim', None)
