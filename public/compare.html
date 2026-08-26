@@ -33,6 +33,16 @@
   .tag { position: absolute; top: 10px; font: 700 10px/1 Archivo; letter-spacing: .2em;
          padding: 6px 10px; border-radius: 3px; background: rgba(6,8,10,.7); pointer-events: none; }
   .tag.l { left: 10px; color: #2fd8f5; } .tag.r { right: 10px; color: #b7e93c; }
+  .modes { display: flex; justify-content: center; gap: 10px; margin: -18px 0 30px; }
+  .mode { font: 700 11px/1 Archivo; letter-spacing: .18em; text-transform: uppercase;
+          background: none; color: #7e8d96; border: 1px solid rgba(238,244,246,.14);
+          border-radius: 3px; padding: 10px 16px; cursor: pointer; }
+  .mode.is-on { color: #06080a; background: #b7e93c; border-color: #b7e93c; }
+  body.side .wipe .top { clip-path: none; position: static; }
+  body.side .wipe { display: grid; grid-template-columns: 1fr 1fr; aspect-ratio: 4/3; cursor: default; }
+  body.side .wipe img { position: static; }
+  body.side .divider { display: none; }
+  body.side .tag.r { right: 10px; }
   .note { text-align: center; color: #7e8d96; font-size: 13.5px; margin-top: 40px; }
 </style>
 </head>
@@ -42,6 +52,10 @@
   card: <b>left of the line is the live three.js can</b> (what ships), <i>right is the Blender
   Cycles path-traced render</i>.</p>
   <div class="legend"><span><b>◂ three.js</b> · live, interactive</span><span><i>Blender ▸</i> · path-traced stills</span></div>
+  <div class="modes">
+    <button class="mode is-on" data-mode="wipe">Wipe</button>
+    <button class="mode" data-mode="side">Side by side</button>
+  </div>
 
   <div class="grid">
     <figure><div class="wipe" data-a="000"></div><figcaption>0° — FRONT</figcaption></figure>
@@ -55,6 +69,12 @@
   frame sequence like the old video approach.</p>
 
 <script>
+  for (const btn of document.querySelectorAll('.mode')) {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode').forEach((b) => b.classList.toggle('is-on', b === btn));
+      document.body.classList.toggle('side', btn.dataset.mode === 'side');
+    });
+  }
   for (const w of document.querySelectorAll('.wipe')) {
     const a = w.dataset.a;
     w.innerHTML = `<img src="/compare/blender-${a}.webp" alt="Blender render at ${+a} degrees">

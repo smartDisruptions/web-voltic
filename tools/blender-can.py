@@ -28,6 +28,7 @@ scene.render.resolution_y = int(1080 * SCALE)
 scene.render.film_transparent = False
 scene.view_settings.view_transform = 'Filmic'
 scene.view_settings.look = 'Medium Contrast'
+scene.view_settings.exposure = -0.85
 
 # ── world: near-black with a faint top glow ──────────────────────────────
 world = bpy.data.worlds.new('w'); scene.world = world
@@ -67,9 +68,9 @@ nt.links.new(label.outputs['Color'], p.inputs['Base Color'])
 nt.links.new(rough.outputs['Color'], p.inputs['Roughness'])
 nt.links.new(bump.outputs['Normal'], p.inputs['Normal'])
 nt.links.new(glow.outputs['Color'], p.inputs['Emission Color'])
-p.inputs['Emission Strength'].default_value = 1.6
+p.inputs['Emission Strength'].default_value = 1.1
 p.inputs['Metallic'].default_value = 0.12
-p.inputs['Coat Weight'].default_value = 0.25
+p.inputs['Coat Weight'].default_value = 0.08
 
 def metal(name, color, roughness, metallic=1.0):
     m = bpy.data.materials.new(name); m.use_nodes = True
@@ -122,40 +123,62 @@ bpy.ops.mesh.primitive_cylinder_add(vertices=96, radius=R * 0.85, depth=0.012, l
 add(bpy.context.object, silver)
 bpy.ops.mesh.primitive_torus_add(major_radius=0.055, minor_radius=0.011, location=(0, -0.05, BODY_H / 2 + 0.1))
 add(bpy.context.object, silver); bpy.ops.object.shade_smooth()
-bpy.ops.mesh.primitive_cone_add(vertices=128, radius1=R, radius2=R * 0.8, depth=0.08, location=(0, 0, -BODY_H / 2 - 0.04))
+# base: wide at the body, tucking inward to the floor (radius1 = bottom)
+bpy.ops.mesh.primitive_cone_add(vertices=128, radius1=R * 0.80, radius2=R,
+                                depth=0.085, location=(0, 0, -BODY_H / 2 - 0.0425))
 add(bpy.context.object, dark); bpy.ops.object.shade_smooth()
+# closed underside disc, just above the floor so it never z-fights
+bpy.ops.mesh.primitive_circle_add(vertices=128, radius=R * 0.80, fill_type='NGON',
+                                  location=(0, 0, -BODY_H / 2 - 0.0845))
+add(bpy.context.object, dark)
 
 root = bpy.data.objects.new('root', None); scene.collection.objects.link(root)
 for o in can_parts: o.parent = root
 root.location.z = FLOOR + BODY_H / 2 + 0.08 - 0  # parts already centered at 0; lift whole can
 root.location.z = FLOOR + BODY_H / 2 + 0.08
 
-# ── glossy floor: real reflections, no mirror hack ───────────────────────
-bpy.ops.mesh.primitive_plane_add(size=30, location=(0, 0, FLOOR))
+# ── glossy sweep: floor curving up into the backdrop (infinity cove), so
+# there is no hard horizon edge anywhere in frame ────────────────────────
+bpy.ops.mesh.primitive_plane_add(size=24, location=(0, 6, FLOOR))
 floor = bpy.context.object
+bpy.ops.object.modifier_add(type='SUBSURF')
+floor.modifiers['Subdivision'].subdivision_type = 'SIMPLE'
+floor.modifiers['Subdivision'].levels = 6
+floor.modifiers['Subdivision'].render_levels = 6
+bpy.ops.object.modifier_add(type='SIMPLE_DEFORM')
+bend = floor.modifiers['SimpleDeform']
+bend.deform_method = 'BEND'
+bend.deform_axis = 'X'
+bend.angle = math.radians(-92)
+bpy.ops.object.shade_smooth()
 fm = bpy.data.materials.new('floor'); fm.use_nodes = True
 fp = fm.node_tree.nodes['Principled BSDF']
-fp.inputs['Base Color'].default_value = (0.008, 0.010, 0.012, 1)
-fp.inputs['Roughness'].default_value = 0.14
-fp.inputs['Metallic'].default_value = 0.85
+fp.inputs['Base Color'].default_value = (0.006, 0.008, 0.009, 1)
+fp.inputs['Roughness'].default_value = 0.24
+fp.inputs['Metallic'].default_value = 0.0
+fp.inputs['Specular IOR Level'].default_value = 0.55
 floor.data.materials.append(fm)
 
 # ── the studio rig as real area lights ───────────────────────────────────
 target = bpy.data.objects.new('aim', None)
 scene.collection.objects.link(target)
 target.location = (0, 0, 0)
-def area(name, loc, color, power, size):
+def area(name, loc, color, power, size, size_y=None):
     d = bpy.data.lights.new(name, 'AREA')
-    d.color = color; d.energy = power; d.size = size
+    d.color = color; d.energy = power
+    if size_y:
+        d.shape = 'RECTANGLE'; d.size = size; d.size_y = size_y
+    else:
+        d.size = size
     o = bpy.data.objects.new(name, d); scene.collection.objects.link(o)
     o.location = loc
     c = o.constraints.new('TRACK_TO')
     c.target = target; c.track_axis = 'TRACK_NEGATIVE_Z'; c.up_axis = 'UP_Y'
     return o
-area('key', (0.9, -2.6, 1.9), (1, 1, 1), 80, 2.2)
-area('cyan', (-2.6, 1.2, 0.4), (0.18, 0.85, 0.96), 300, 1.4)
-area('lime', (2.6, 1.3, 0.2), (0.72, 0.91, 0.24), 250, 1.4)
-area('fill', (0, -3.2, -0.5), (0.57, 0.64, 0.68), 12, 3)
+area('key', (0.9, -2.6, 1.9), (1, 1, 1), 55, 2.4, 3.4)
+area('cyan', (-2.6, 1.2, 0.4), (0.18, 0.85, 0.96), 150, 0.5, 4.5)
+area('lime', (2.6, 1.3, 0.2), (0.72, 0.91, 0.24), 125, 0.5, 4.5)
+area('fill', (0, -3.2, -0.5), (0.57, 0.64, 0.68), 8, 3)
 
 # ── camera: matches the three.js framing ─────────────────────────────────
 cam = bpy.data.cameras.new('cam'); cam.lens_unit = 'FOV'; cam.angle = math.radians(32)
