@@ -440,7 +440,16 @@ img { max-width: 100%; height: auto; display: block; }
   position: relative; z-index: 3;
   text-align: center;
   padding: 22svh 20px;
-  text-shadow: 0 2px 24px rgba(3, 4, 5, 0.9), 0 0 60px rgba(3, 4, 5, 0.6);
+  /* drop-shadow, NOT text-shadow: gradient text is painted through a
+     transparent fill, so a text-shadow shows through the glyphs and muddies
+     them. A filter shadows the rendered result instead. */
+  filter: drop-shadow(0 2px 18px rgba(3, 4, 5, 0.95)) drop-shadow(0 0 40px rgba(3, 4, 5, 0.7));
+}
+/* lift the accent line off a busy photo backdrop */
+.splash-copy .giant em {
+  background: linear-gradient(105deg, #7fe9ff 0%, #a5f0d8 45%, #d2f76a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 .stats {
   display: flex; flex-wrap: wrap; justify-content: center;
