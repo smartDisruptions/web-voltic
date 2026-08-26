@@ -107,6 +107,9 @@ const cardEl = document.querySelector('.spin-card');
 // ?classic=1 forces the scrubbed-frames version; WebGL failures fall back
 // to it automatically.
 const USE_3D = !new URLSearchParams(location.search).has('classic');
+// ?angle=N pins the 3D can at an exact angle — used by QA and the
+// blender-comparison capture, harmless otherwise
+const FIXED_ANGLE = new URLSearchParams(location.search).get('angle');
 let can3d = null;
 function angle360(pr) {
   // slows to ~25% speed around the back, quicker through the flanks
@@ -188,7 +191,7 @@ function updateSpin() {
   const p = clamp01((state.smoothY - spinTop) / spinRange);
   const pr = clamp01(p / SPIN_END);
   if (can3d) {
-    can3d.setAngle(angle360(pr));
+    can3d.setAngle(FIXED_ANGLE !== null ? +FIXED_ANGLE : angle360(pr));
     can3d.render();
   } else {
     drawFrame(Math.round(pr * (FRAMES - 1)));
