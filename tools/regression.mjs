@@ -2,7 +2,8 @@
 /**
  * Regression suite: axe-core at several scroll states, network 404 sweep,
  * console/page errors, keyboard order + skip link, reduced-motion render,
- * and screenshots across viewports. Exits non-zero on any failure.
+ * the no-WebGL fallback, and screenshots across viewports. Exits non-zero on
+ * any failure.
  *
  *   node tools/regression.mjs <url> <outdir>
  */
@@ -14,7 +15,8 @@ import { homedir } from 'node:os';
 const URL = process.argv[2] || 'http://localhost:5199';
 const OUT = process.argv[3] || './regression-out';
 mkdirSync(OUT, { recursive: true });
-const exe = join(homedir(), 'Library/Caches/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-mac-arm64/chrome-headless-shell');
+const exe = process.env.CHROME_PATH ||
+  join(homedir(), 'Library/Caches/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-mac-arm64/chrome-headless-shell');
 const axeSrc = readFileSync(join(import.meta.dirname, '..', 'node_modules/axe-core/axe.min.js'), 'utf8');
 
 const failures = [];
@@ -79,6 +81,43 @@ for (const [name, w, h] of [['mobile', 390, 844], ['landscape', 844, 390], ['wid
   await p.screenshot({ path: join(OUT, `${name}-deep.png`) });
   if (errs.length) failures.push(`${name}: ${errs.join(' | ')}`);
   console.log(`${name} ${w}×${h}: ${errs.length ? 'ERRORS' : 'ok'}`);
+  await p.close();
+}
+
+// ── no WebGL: the scrubbed frames must take over, visibly ────────────────
+// The failure this guards: boot3D used to hide the frame canvas before the
+// renderer could throw, so a browser without WebGL fell back to frames it
+// then never showed — an empty stage with a live degree readout.
+{
+  const p = await b.newPage({ viewport: { width: 1280, height: 800 } });
+  await p.addInitScript(() => {
+    const getContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
+      return String(type).includes('webgl') ? null : getContext.call(this, type, ...rest);
+    };
+  });
+  const errs = [];
+  p.on('pageerror', (e) => errs.push(String(e)));
+  await p.goto(URL, { waitUntil: 'networkidle' });
+  await p.evaluate(() => {
+    const s = document.querySelector('.spin');
+    scrollTo({ top: s.offsetTop + (s.offsetHeight - innerHeight) * 0.5, behavior: 'instant' });
+  });
+  await p.waitForTimeout(2500); // module import, failed boot, then frame load
+  const checks = await p.evaluate(() => {
+    const c = document.querySelector('.spin-canvas');
+    const box = c.getBoundingClientRect();
+    return {
+      frameCanvasShown: getComputedStyle(c).display !== 'none' && box.width > 0 && box.height > 0,
+      frameDrawn: c.width > 300, // a drawn frame sizes the canvas to the source image
+      noOrphanHost: !document.querySelector('.spin-3d'),
+      arcStaysAt180: document.querySelector('.spin-ghost').textContent.trim() === '180°',
+    };
+  });
+  await p.screenshot({ path: join(OUT, 'no-webgl.png') });
+  for (const [k, v] of Object.entries(checks)) if (!v) failures.push(`no-webgl: ${k} failed`);
+  if (errs.length) failures.push(`no-webgl errors: ${errs.join(' | ')}`);
+  console.log('no-webgl:', Object.entries(checks).map(([k, v]) => `${k}=${v}`).join(' '));
   await p.close();
 }
 

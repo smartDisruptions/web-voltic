@@ -110,21 +110,29 @@ function angle360(pr) {
   return 360 * (pr + 0.115 * Math.sin(2 * Math.PI * pr));
 }
 async function boot3D() {
+  // Nothing the frames path depends on changes until the can is actually
+  // alive. The host has to be in the DOM before construction so the renderer
+  // can measure it, so that is inside the try and gets torn back down on the
+  // way out — otherwise a browser without WebGL kept a hidden frame canvas
+  // behind an empty stage, and the section rendered no can at all.
+  const host = document.createElement('div');
+  host.className = 'spin-3d';
   try {
     const { createCan3D } = await import('./can3d.js');
-    const host = document.createElement('div');
-    host.className = 'spin-3d';
     canvas.parentElement.insertBefore(host, canvas);
-    canvas.style.display = 'none';
     can3d = createCan3D(host);
-    ARC_DEG = 360;
-    document.querySelector('.spin-ghost').textContent = '360°';
-    addEventListener('resize', () => can3d.resize());
-    lastFrame = -2; // force a state push
   } catch (e) {
     console.warn('3D can unavailable, keeping frames:', e);
+    host.remove();
+    can3d = null;
     loadFrames();
+    return;
   }
+  canvas.style.display = 'none';
+  ARC_DEG = 360;
+  document.querySelector('.spin-ghost').textContent = '360°';
+  addEventListener('resize', () => can3d.resize());
+  lastFrame = -2; // force a state push
 }
 
 function measureSpin() {
