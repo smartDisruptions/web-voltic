@@ -38,7 +38,8 @@ const prefetch = [
   ...chunkFiles.map((f) => `<link rel="prefetch" href="/assets/${f}" as="script" crossorigin>`),
   '<link rel="prefetch" href="/tex/label.webp" as="image">',
   '<link rel="prefetch" href="/tex/glow.webp" as="image">',
-  '<link rel="prefetch" href="/tex/drops-bump.webp" as="image">',
+  '<link rel="prefetch" href="/tex/drops-height.webp" as="image">',
+  '<link rel="prefetch" href="/tex/drops-rough.webp" as="image">',
 ].join('');
 html = html.replace('</head>', `${prefetch}</head>`);
 writeFileSync(htmlPath, html);

@@ -62,23 +62,27 @@ export function createCan3D(container) {
 
   const label = tex('/tex/label.webp');
   const glow = tex('/tex/glow.webp');
-  const drops = loader.load('/tex/drops-bump.webp', (t) => {
+  const wrap = (t) => {
     t.wrapS = t.wrapT = THREE.RepeatWrapping;
-    t.repeat.set(3, 2);
+    t.repeat.set(2.5, 2);
     dirty = true;
-  });
+  };
+  const dropsHeight = loader.load('/tex/drops-height.webp', wrap);
+  const dropsRough = loader.load('/tex/drops-rough.webp', wrap);
 
   const bodyMat = new THREE.MeshPhysicalMaterial({
     map: label,
     emissiveMap: glow,
     emissive: 0xffffff,
     emissiveIntensity: 0.42,
-    roughness: 0.46,
+    // roughness lives in the map: matte can (~0.58) with glossy droplet
+    // interiors (~0.10) — that specular contrast is what reads as "wet"
+    roughness: 1.0,
+    roughnessMap: dropsRough,
     metalness: 0.12,
-    clearcoatRoughness: 0.4,
-    bumpMap: drops,
-    bumpScale: 0.6,
-    envMapIntensity: 0.22,
+    bumpMap: dropsHeight,
+    bumpScale: 1.6,
+    envMapIntensity: 0.3,
   });
   const darkMetal = new THREE.MeshStandardMaterial({ color: 0x15181a, roughness: 0.5, metalness: 0.6 });
   const silver = new THREE.MeshStandardMaterial({ color: 0xb9c2c6, roughness: 0.32, metalness: 1.0 });
