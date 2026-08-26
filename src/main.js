@@ -99,9 +99,11 @@ const CARD_IN = 0.74, CARD_FULL = 0.86;
 let ARC_DEG = 180;
 const cardEl = document.querySelector('.spin-card');
 
-// ── ?can3d=1: real-time three.js can instead of scrubbed frames ──────────
+// ── the real-time three.js can is the default experience ─────────────────
 // Full 360° with an eased dwell at 180° so the back panel gets read time.
-const USE_3D = new URLSearchParams(location.search).has('can3d');
+// ?classic=1 forces the scrubbed-frames version; WebGL failures fall back
+// to it automatically, and reduced-motion users get the static frame.
+const USE_3D = !new URLSearchParams(location.search).has('classic');
 let can3d = null;
 function angle360(pr) {
   // slows to ~25% speed around the back, quicker through the flanks
@@ -228,7 +230,7 @@ function updateSpin() {
 // start pulling the spin's assets when the section is approaching — but
 // never before the page itself has finished loading
 if (spinSection) {
-  const start = () => (USE_3D ? boot3D() : loadFrames());
+  const start = () => (USE_3D && motionOK ? boot3D() : loadFrames());
   const arm = () => new IntersectionObserver((entries, io) => {
     if (entries.some((e) => e.isIntersecting)) { start(); io.disconnect(); }
   }, { rootMargin: USE_3D ? '160% 0%' : '80% 0%' }).observe(spinSection);

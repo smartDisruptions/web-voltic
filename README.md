@@ -8,12 +8,13 @@ then the site was built around the assets.
 
 - **Layered hero** — glow fields, ghost wordmark, can, and three droplet planes
   moving at different scroll speeds *and* tracking the pointer at different depths.
-- **Scroll-scrubbed turn + flip** — a pinned section that maps scroll progress
-  onto frames from a generated turntable video (Apple-product-page style) with
-  a live degree readout; the can dissolves mid-turn and a nutrition-facts card
-  takes the stage. The arc stops at ~135° deliberately: video models cannot
-  render legible micro-text, so the can's generated back panel never faces the
-  camera — the facts are real DOM typography instead.
+- **Real-time 3D turn + flip** — the can is live three.js geometry wearing an
+  authored label texture (site fonts, exact nutrition values), so every angle
+  is correct by construction. Scroll drives a full 360° with an eased reading
+  dwell on the back panel; you can also grab the can and spin it. The can
+  dissolves and a nutrition-facts card lands as the finale. `?classic=1`
+  serves the earlier scrubbed-frames version (generated turntable footage
+  pinned to real photos), which is also the automatic no-WebGL fallback.
 - **Full-bleed image parallax** — the splash and trio photos drift slower than
   the page inside overflow-hidden frames.
 - **Scroll-scrubbed clip reveal** — the macro shot unmasks as it enters.
