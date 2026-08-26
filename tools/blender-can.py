@@ -26,9 +26,9 @@ scene.cycles.use_denoising = True
 scene.render.resolution_x = int(720 * SCALE)
 scene.render.resolution_y = int(1080 * SCALE)
 scene.render.film_transparent = False
-scene.view_settings.view_transform = 'Filmic'
-scene.view_settings.look = 'Medium Contrast'
-scene.view_settings.exposure = -0.85
+scene.view_settings.view_transform = 'AgX'
+scene.view_settings.look = 'AgX - Base Contrast'
+scene.view_settings.exposure = -0.35
 
 # ── world: near-black with a faint top glow ──────────────────────────────
 world = bpy.data.worlds.new('w'); scene.world = world
@@ -50,8 +50,8 @@ def texnode(image, x, y):
     return n
 label = texnode(img(f'{TEX}/blender-label.png'), -600, 300)
 glow = texnode(img(f'{TEX}/blender-glow.png'), -600, 0)
-rough = texnode(img(f'{TEX}/blender-drops-rough.png', True), -600, -300)
-height = texnode(img(f'{TEX}/blender-drops-height.png', True), -600, -600)
+rough = texnode(img(f'{TEX}/blender-drops-rough-dense.png', True), -600, -300)
+height = texnode(img(f'{TEX}/blender-drops-height-dense.png', True), -600, -600)
 # tile the droplet maps like the web version
 mapping = nt.nodes.new('ShaderNodeMapping'); mapping.location = (-820, -450)
 mapping.inputs['Scale'].default_value = (2.5, 2.0, 1)
@@ -62,7 +62,7 @@ nt.links.new(mapping.outputs[0], height.inputs[0])
 for t in (rough, height):
     t.extension = 'REPEAT'
 bump = nt.nodes.new('ShaderNodeBump'); bump.location = (-300, -600)
-bump.inputs['Strength'].default_value = 0.25
+bump.inputs['Strength'].default_value = 0.4
 nt.links.new(height.outputs['Color'], bump.inputs['Height'])
 nt.links.new(label.outputs['Color'], p.inputs['Base Color'])
 nt.links.new(rough.outputs['Color'], p.inputs['Roughness'])
@@ -175,9 +175,9 @@ def area(name, loc, color, power, size, size_y=None):
     c = o.constraints.new('TRACK_TO')
     c.target = target; c.track_axis = 'TRACK_NEGATIVE_Z'; c.up_axis = 'UP_Y'
     return o
-area('key', (0.9, -2.6, 1.9), (1, 1, 1), 55, 2.4, 3.4)
-area('cyan', (-2.6, 1.2, 0.4), (0.18, 0.85, 0.96), 150, 0.5, 4.5)
-area('lime', (2.6, 1.3, 0.2), (0.72, 0.91, 0.24), 125, 0.5, 4.5)
+area('key', (0.9, -2.6, 1.9), (1, 1, 1), 42, 2.4, 3.4)
+area('cyan', (-2.6, 1.2, 0.4), (0.18, 0.85, 0.96), 95, 0.5, 4.5)
+area('lime', (2.6, 1.3, 0.2), (0.72, 0.91, 0.24), 80, 0.5, 4.5)
 area('fill', (0, -3.2, -0.5), (0.57, 0.64, 0.68), 8, 3)
 
 # ── camera: matches the three.js framing ─────────────────────────────────

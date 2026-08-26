@@ -11,6 +11,7 @@
 import sharp from 'sharp';
 import { join } from 'node:path';
 
+const DENSE = process.argv.includes('--dense');
 const SIZE = 1024;
 const OUT = join(import.meta.dirname, '..', 'public', 'tex');
 
@@ -20,11 +21,11 @@ const rand = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32;
 
 const drops = [];
 // fine mist: hundreds of tiny beads
-for (let i = 0; i < 600; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 1.2 + rand() * 2.6, run: 0 });
+for (let i = 0; i < (DENSE ? 1500 : 600); i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 1.2 + rand() * 2.6, run: 0 });
 // medium beads
-for (let i = 0; i < 105; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 4 + rand() * 5, run: 0 });
+for (let i = 0; i < (DENSE ? 280 : 105); i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 4 + rand() * 5, run: 0 });
 // large drops, some with a short run-down trail
-for (let i = 0; i < 22; i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 10 + rand() * 9, run: rand() < 0.45 ? 12 + rand() * 40 : 0 });
+for (let i = 0; i < (DENSE ? 60 : 22); i++) drops.push({ x: rand() * SIZE, y: rand() * SIZE, r: 10 + rand() * 9, run: rand() < 0.45 ? 12 + rand() * 40 : 0 });
 
 // wrap duplicates so nothing clips at a tile edge
 const placed = [];
@@ -55,6 +56,6 @@ function svg(mode) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}"><defs>${defs}</defs><rect width="${SIZE}" height="${SIZE}" fill="${bg}"/>${shapes}</svg>`;
 }
 
-await sharp(Buffer.from(svg('h'))).blur(0.6).webp({ quality: 90 }).toFile(join(OUT, 'drops-height.webp'));
-await sharp(Buffer.from(svg('r'))).blur(0.4).webp({ quality: 90 }).toFile(join(OUT, 'drops-rough.webp'));
-console.log('drops-height.webp + drops-rough.webp written');
+await sharp(Buffer.from(svg('h'))).blur(0.6).webp({ quality: 90 }).toFile(join(OUT, DENSE ? 'drops-height-dense.webp' : 'drops-height.webp'));
+await sharp(Buffer.from(svg('r'))).blur(0.4).webp({ quality: 90 }).toFile(join(OUT, DENSE ? 'drops-rough-dense.webp' : 'drops-rough.webp'));
+console.log(DENSE ? 'dense variants written' : 'drops-height.webp + drops-rough.webp written');
