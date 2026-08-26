@@ -106,15 +106,12 @@ const cardEl = document.querySelector('.spin-card');
 // Full 360° with an eased dwell at 180° so the back panel gets read time.
 // ?classic=1 forces the scrubbed-frames version; WebGL failures fall back
 // to it automatically.
-// ?blender=1 swaps in the Blender Cycles pre-rendered frame sequence —
-// richer path-traced light through the same scrub pipeline
-const BLENDER = new URLSearchParams(location.search).has('blender');
-const USE_3D = !BLENDER && !new URLSearchParams(location.search).has('classic');
-const FRAME_DIR = BLENDER ? '/bframes' : '/frames';
-if (BLENDER) {
-  ARC_DEG = 360;
-  document.querySelector('.spin-ghost').textContent = '360°';
-}
+// Renderer decided 2026-08-26: the live three.js can ships. The Blender
+// Cycles bake was evaluated side by side (/compare.html, tools/blender-can.py)
+// and lost on load weight (2MB of frames vs ~250KB) and smoothness (6°
+// stepping vs continuous rotation), despite nicer light.
+const USE_3D = !new URLSearchParams(location.search).has('classic');
+const FRAME_DIR = '/frames';
 // ?angle=N pins the 3D can at an exact angle — used by QA and the
 // blender-comparison capture, harmless otherwise
 const FIXED_ANGLE = new URLSearchParams(location.search).get('angle');
@@ -202,8 +199,7 @@ function updateSpin() {
     can3d.setAngle(FIXED_ANGLE !== null ? +FIXED_ANGLE : angle360(pr));
     can3d.render();
   } else {
-    // blender mode gets the same eased 360 (with the reading dwell) as 3D
-    drawFrame(Math.round((BLENDER ? angle360(pr) / 360 : pr) * (FRAMES - 1)));
+    drawFrame(Math.round(pr * (FRAMES - 1)));
   }
 
   // act 1 → act 2: can (and its degree readout) dissolve while still turning
@@ -215,7 +211,7 @@ function updateSpin() {
     if (degEl) degEl.parentElement.style.opacity = canA;
   }
   if (degEl) {
-    const deg = String(Math.round(can3d || BLENDER ? angle360(pr) : pr * ARC_DEG)).padStart(3, '0');
+    const deg = String(Math.round(can3d ? angle360(pr) : pr * ARC_DEG)).padStart(3, '0');
     if (deg !== lastDeg) { lastDeg = deg; degEl.textContent = deg; }
   }
   if (fillEl) {

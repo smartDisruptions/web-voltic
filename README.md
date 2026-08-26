@@ -39,6 +39,17 @@ learning that no seeding strategy gets a video model to render both a faithful
 front and legible back micro-text — which is why the spin section flips to a
 typographic facts card instead of ever showing the generated back).
 
+## Renderer decision (2026-08-26)
+
+The spin section was prototyped three ways and judged side by side at
+[`/compare.html`](https://web-voltic.vercel.app/compare.html):
+
+| Approach | Verdict |
+|---|---|
+| Generative video (kie.ai) | Retired. No seeding strategy kept a product consistent *and* rendered legible micro-text. 577 credits spent learning it. Still reachable at `?classic=1`. |
+| **three.js, live** | **Ships.** ~250 KB, continuous rotation, drag-to-spin, label edits are text edits. |
+| Blender Cycles bake | Prettier light, but 2 MB of frames and 6° stepping. Scene kept at `tools/blender-can.py` for stills/print. |
+
 ## Dev
 
 ```bash

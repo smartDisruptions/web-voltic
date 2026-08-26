@@ -64,9 +64,10 @@
     <figure><div class="wipe" data-a="270"></div><figcaption>270° — FLANK</figcaption></figure>
   </div>
 
-  <p class="note">The three.js version renders live in the page (drag the real can to spin it, zero credits
-  per change). The Blender version is pre-rendered film frames — richer light, but it would ship as a
-  frame sequence like the old video approach.</p>
+  <p class="note"><b style="color:#b7e93c">Decision (2026-08-26): three.js ships.</b> Blender's light is
+  richer, but it loses on the two things this site sells — load weight (2&nbsp;MB of frames vs ~250&nbsp;KB)
+  and smoothness (60 frames means 6° stepping; the live can rotates continuously and can be dragged).
+  The Blender scene lives on as <code>tools/blender-can.py</code> for stills and future print work.</p>
 
 <script>
   for (const btn of document.querySelectorAll('.mode')) {
