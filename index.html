@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>VOLTIC — Liquid Lightning</title>
-  <meta name="description" content="VOLTIC energy. Liquid lightning in a matte black can. 200mg natural caffeine, zero sugar, all voltage." />
+  <meta name="description" content="VOLTIC energy. One live can, three flavors, 200mg natural caffeine, zero sugar. Spin it, switch it, crack it open." />
   <meta property="og:title" content="VOLTIC — Liquid Lightning" />
   <meta property="og:description" content="200mg natural caffeine. Zero sugar. All voltage." />
   <meta property="og:image" content="https://web-voltic.vercel.app/img/og.jpg" />
@@ -15,84 +15,87 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M18 2 6 19h7l-3 11L26 12h-8l4-10z' fill='%232fd8f5'/%3E%3C/svg%3E" />
   <link rel="preload" as="font" type="font/woff2" href="/fonts/anton-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="/fonts/archivo-400.woff2" crossorigin />
-  <link rel="preload" as="image" href="/img/hero-can.webp" fetchpriority="high" />
   <script type="module" src="/src/main.js"></script>
   <link rel="stylesheet" href="/src/style.css" />
 </head>
-<body>
+<body data-flavor="original">
 
   <a class="skip-link" href="#content">Skip to content</a>
-  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ═══ THE STAGE — fixed behind everything; the can lives here ═══ -->
+  <div class="stage" aria-hidden="true">
+    <div class="backdrop">
+      <div class="bd-glow bd-glow--a"></div>
+      <div class="bd-glow bd-glow--b"></div>
+      <div class="bd-drops"><i></i></div>
+      <div class="bd-ghost"><span>VOLTIC</span></div>
+    </div>
+    <canvas class="bolts"></canvas>
+    <div class="charging"><span></span></div>
+    <img class="stage-fallback" data-src="/img/hero-can.webp" alt="" width="800" height="1192" decoding="async" />
+    <div class="flash"></div>
+  </div>
 
   <header class="nav">
-    <a class="nav-logo" href="#hero" aria-label="Voltic home">
+    <a class="nav-logo" href="#hero" aria-label="Voltic, back to top">
       <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path d="M18 2 6 19h7l-3 11L26 12h-8l4-10z" fill="currentColor"/></svg>
       <span>VOLTIC</span>
     </a>
-    <nav class="nav-links">
+    <nav class="nav-links" aria-label="Sections">
       <a href="#spin">Spin</a>
-      <a href="#charge">Charge</a>
+      <a href="#circuit">Inside</a>
       <a href="#flavors">Flavors</a>
-      <a href="#cta" class="nav-cta">Get Charged</a>
     </nav>
+    <div class="battery" role="progressbar" aria-label="Page charge" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <span class="battery-cell"><i></i></span>
+      <span class="battery-pct">0%</span>
+    </div>
+    <a href="#cta" class="nav-cta">Crack one</a>
   </header>
 
   <main id="content">
 
-  <!-- ═══ HERO — layered mouse + scroll parallax ═══ -->
+  <!-- ═══ HERO ═══ -->
   <section class="hero" id="hero">
-    <div class="hero-glow hero-glow--cyan" data-depth="0.03" aria-hidden="true"></div>
-    <div class="hero-glow hero-glow--lime" data-depth="0.05" aria-hidden="true"></div>
-
-    <div class="hero-ghost" data-depth="0.06" data-speed="-0.08" aria-hidden="true">VOLTIC</div>
-
-    <div class="hero-can-wrap" data-depth="0.11" data-speed="0.22">
-      <img class="hero-can" src="/img/hero-can.webp" alt="Matte black VOLTIC energy drink can covered in condensation, with a glowing cyan-to-lime wordmark" width="720" height="1080" fetchpriority="high" decoding="async" />
-      <div class="hero-can-glow" aria-hidden="true"></div>
-    </div>
-
-    <!-- droplet field: three depths of generated droplet imagery, screen-blended -->
-    <div class="drops drops--far"  data-depth="0.04" data-speed="-0.06" aria-hidden="true"></div>
-    <div class="drops drops--mid"  data-depth="0.09" data-speed="0.1"  aria-hidden="true"></div>
-    <div class="drops drops--near" data-depth="0.16" data-speed="0.3"  aria-hidden="true"></div>
-
-    <div class="hero-copy" data-speed="0.06">
+    <div class="hero-copy">
       <p class="eyebrow reveal">New · 473ml · Zero sugar</p>
       <h1 class="hero-title">
         <span class="reveal">LIQUID</span>
-        <span class="reveal hero-title-accent">LIGHTNING</span>
+        <span class="reveal accent-text">LIGHTNING</span>
       </h1>
-      <p class="hero-sub reveal">200mg of natural caffeine wrapped in matte black aluminum.
-      Cold, sharp, and completely out of line.</p>
+      <p class="hero-sub reveal">200mg of natural caffeine in matte black aluminum. Cold, sharp, and completely out of line.</p>
       <div class="hero-actions reveal">
-        <a class="btn btn--charged" href="#spin">See it spin</a>
-        <a class="btn btn--ghost" href="#charge">What's inside</a>
+        <a class="btn btn--charged" href="#spin">Spin the can</a>
+        <a class="btn btn--ghost" href="#flavors">Pick a flavor</a>
       </div>
     </div>
-
-    <div class="scroll-cue" aria-hidden="true">
-      <span></span>
-      <p>Scroll to charge</p>
-    </div>
+    <ul class="hero-specs" aria-label="At a glance">
+      <li class="reveal"><b>200</b><span>mg caffeine</span></li>
+      <li class="reveal"><b>0</b><span>g sugar</span></li>
+      <li class="reveal"><b>5</b><span>calories</span></li>
+    </ul>
+    <div class="scroll-cue" aria-hidden="true"><span></span><p>Scroll to charge</p></div>
   </section>
 
-  <!-- ═══ 360° — pinned, scroll-scrubbed rotation ═══ -->
-  <section class="spin" id="spin">
+  <!-- ═══ MARQUEE — scroll-velocity reactive, passes in front of the can ═══ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>VOLTIC <i>⚡</i> LIQUID LIGHTNING <i>⚡</i> ZERO SUGAR <i>⚡</i> ALL VOLTAGE <i>⚡</i>&nbsp;</span>
+      <span>VOLTIC <i>⚡</i> LIQUID LIGHTNING <i>⚡</i> ZERO SUGAR <i>⚡</i> ALL VOLTAGE <i>⚡</i>&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- ═══ SPIN — pinned 360°, the real label's back panel, then the facts ═══ -->
+  <section class="spin" id="spin" aria-label="The can, every angle">
     <div class="spin-stage">
-      <div class="spin-bg" aria-hidden="true"></div>
-      <div class="spin-ghost" aria-hidden="true">180°</div>
-
-      <canvas class="spin-canvas" role="img" data-frames="60" width="720" height="1080"
-        aria-label="VOLTIC can turning to show its nutrition facts panel as you scroll"></canvas>
-
+      <div class="pad spin-pad" aria-hidden="true"></div>
+      <div class="spin-caption" data-step="0"><h2>EVERY<br /> ANGLE.</h2><p>One can. Live geometry. No bad side.</p></div>
+      <div class="spin-caption" data-step="1"><h2>ALL<br /> VOLTAGE.</h2><p>Turn it around. Read the back.</p></div>
       <div class="spin-hud" aria-hidden="true">
         <div class="spin-deg"><span class="spin-deg-num">000</span>°</div>
         <div class="spin-track"><div class="spin-track-fill"></div></div>
+        <p class="spin-hint">Drag the can to spin it</p>
       </div>
-
-      <div class="spin-caption" data-step="0"><h2>EVERY ANGLE.</h2><p>One can. No bad side.</p></div>
-      <div class="spin-caption" data-step="1"><h2>ALL VOLTAGE.</h2><p>And when it turns its back—</p></div>
-
       <div class="spin-card">
         <p class="eyebrow">The flip side</p>
         <h2>ZERO SUGAR.</h2>
@@ -110,95 +113,114 @@
     </div>
   </section>
 
-  <!-- ═══ SPLASH — full-bleed parallax + counters ═══ -->
-  <section class="splash" id="charge">
-    <div class="splash-media" data-speed="0.18" aria-hidden="true">
-      <img src="/img/splash.webp" alt="" loading="lazy" width="1536" height="1024" />
+  <!-- ═══ CHARGE — opaque curtain: full-bleed parallax photo + counters ═══ -->
+  <section class="charge curtain" id="charge">
+    <div class="charge-media">
+      <picture>
+        <source media="(max-aspect-ratio: 4/5)" srcset="/img/splash-portrait.webp" />
+        <source media="(max-width: 960px)" srcset="/img/splash-960.webp" />
+        <img src="/img/splash.webp" data-inner-speed="0.16" alt="A VOLTIC can plunging into a crown of ice water" loading="lazy" decoding="async" width="1920" height="1288" />
+      </picture>
     </div>
-    <div class="splash-tint" aria-hidden="true"></div>
-    <div class="drops drops--mid splash-drops" data-speed="0.34" aria-hidden="true"></div>
-
-    <div class="splash-copy">
+    <div class="charge-tint" aria-hidden="true"></div>
+    <div class="charge-copy">
       <p class="eyebrow reveal">The charge</p>
       <h2 class="giant reveal">DETONATE<br /><em>YOUR LIMITS</em></h2>
       <dl class="stats">
         <div class="stat reveal"><dt>Natural caffeine</dt><dd><span class="count" data-count="200">0</span><i>mg</i></dd></div>
         <div class="stat reveal"><dt>Sugar</dt><dd><span class="count" data-count="0">0</span><i>g</i></dd></div>
-        <div class="stat reveal"><dt>Calories</dt><dd><span class="count" data-count="5">0</span><i>&nbsp;</i></dd></div>
+        <div class="stat reveal"><dt>Calories</dt><dd><span class="count" data-count="5">0</span></dd></div>
         <div class="stat reveal"><dt>Voltage</dt><dd><span class="count" data-count="100">0</span><i>%</i></dd></div>
       </dl>
     </div>
   </section>
 
-  <!-- ═══ MACRO — clip reveal + inner parallax ═══ -->
-  <section class="macro">
-    <div class="macro-grid">
-      <div class="macro-copy">
-        <p class="eyebrow reveal">Served at 2°C</p>
-        <h2 class="giant reveal">COLD TO<br /><em>THE CORE</em></h2>
-        <p class="body reveal">Every can leaves the line at two degrees and stays honest about it —
-        the condensation isn't styling, it's a warning label.</p>
-        <ul class="macro-list">
-          <li class="reveal"><b>Electrolyte stack</b><span>sodium · potassium · magnesium</span></li>
-          <li class="reveal"><b>B-vitamin surge</b><span>B3 · B6 · B12 at full send</span></li>
-          <li class="reveal"><b>L-theanine curve</b><span>the spike without the shatter</span></li>
-        </ul>
+  <!-- ═══ CIRCUIT — the can docks; each ingredient powers on as current reaches it ═══ -->
+  <section class="circuit" id="circuit">
+    <div class="circuit-head">
+      <p class="eyebrow reveal">What's inside</p>
+      <h2 class="giant reveal">FOLLOW<br /><em>THE CURRENT</em></h2>
+    </div>
+    <div class="circuit-body">
+      <div class="wire" aria-hidden="true"><i></i></div>
+      <ol class="circuit-list">
+        <li class="node"><span class="node-dose"><b data-to="200">200</b>mg</span><h3>Natural caffeine</h3><p>From green coffee beans. The spark.</p></li>
+        <li class="node"><span class="node-dose"><b data-to="1000">1000</b>mg</span><h3>Taurine</h3><p>Keeps the signal clean under load.</p></li>
+        <li class="node"><span class="node-dose"><b data-to="100">100</b>mg</span><h3>L-Theanine</h3><p>The spike without the shatter.</p></li>
+        <li class="node"><span class="node-dose"><b data-to="16">16</b>mg</span><h3>B3 · B6 · B12</h3><p>Niacin leads the vitamin surge, at full send.</p></li>
+        <li class="node"><span class="node-dose"><b data-to="175">175</b>mg</span><h3>Electrolytes</h3><p>Sodium and potassium for the last set.</p></li>
+        <li class="node node--zero"><span class="node-dose"><b data-to="0">0</b>g</span><h3>Sugar</h3><p>Sweetness is a crutch.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══ FLAVORS — pinned; scroll or swipe changes the live can's label ═══ -->
+  <section class="flavors" id="flavors" aria-label="Flavors">
+    <div class="flavors-stage">
+      <div class="pad flavor-pad" aria-hidden="true"></div>
+      <div class="flavor-info">
+        <p class="eyebrow">Pick your charge · <span class="flavor-count">01 / 03</span></p>
+        <h2 class="flavor-name" aria-live="polite">VOLT<br /> <em>ORIGINAL</em></h2>
+        <p class="flavor-desc">The matte black standard. Citrus edge, metallic finish, no apologies.</p>
       </div>
-      <figure class="macro-fig clip-reveal">
-        <img src="/img/macro.webp" data-inner-speed="0.14" alt="Extreme close-up of condensation beads on the VOLTIC can's glowing cyan lettering" loading="lazy" width="1536" height="864" />
-      </figure>
+      <div class="flavor-picker" role="group" aria-label="Choose a flavor">
+        <button type="button" class="chip" data-flavor="original" aria-pressed="true"><i style="--c:#2fd8f5"></i>Original</button>
+        <button type="button" class="chip" data-flavor="citrus" aria-pressed="false"><i style="--c:#d8f53c"></i>Citrus</button>
+        <button type="button" class="chip" data-flavor="storm" aria-pressed="false"><i style="--c:#b46cff"></i>Storm</button>
+      </div>
+      <p class="flavor-hint" aria-hidden="true">Swipe the can</p>
     </div>
   </section>
 
-  <!-- ═══ MARQUEE — scroll-velocity reactive ═══ -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-track">
-      <span>VOLTIC ⚡ LIQUID LIGHTNING ⚡ ZERO SUGAR ⚡ ALL VOLTAGE ⚡&nbsp;</span>
-      <span>VOLTIC ⚡ LIQUID LIGHTNING ⚡ ZERO SUGAR ⚡ ALL VOLTAGE ⚡&nbsp;</span>
-    </div>
-  </div>
-
-  <!-- ═══ FLAVORS — depth-staggered cards over trio banner ═══ -->
-  <section class="flavors" id="flavors">
-    <div class="flavors-banner">
-      <img src="/img/trio.webp" data-inner-speed="0.12" alt="Three VOLTIC cans standing on wet black slate in a fine mist" loading="lazy" width="1536" height="1024" />
-    </div>
-    <div class="flavors-head">
-      <p class="eyebrow reveal">Three strikes</p>
-      <h2 class="giant reveal">PICK YOUR<br /><em>POISON</em></h2>
-    </div>
-    <div class="flavor-cards">
-      <article class="flavor-card reveal" data-speed="0.05" data-tilt>
-        <span class="flavor-num">01</span>
-        <h3>VOLT<br />ORIGINAL</h3>
-        <p>The matte black standard. Citrus edge, metallic finish, no apologies.</p>
-        <span class="flavor-tag" style="--tag:#2fd8f5">signature</span>
-      </article>
-      <article class="flavor-card reveal" data-speed="-0.03" data-tilt>
-        <span class="flavor-num">02</span>
-        <h3>CITRUS<br />OVERLOAD</h3>
-        <p>Lime pushed past the legal limit. Bright enough to read by.</p>
-        <span class="flavor-tag" style="--tag:#b7e93c">loud</span>
-      </article>
-      <article class="flavor-card reveal" data-speed="0.09" data-tilt>
-        <span class="flavor-num">03</span>
-        <h3>STORM<br />BERRY</h3>
-        <p>Dark fruit under a live current. For the last set and the long night.</p>
-        <span class="flavor-tag" style="--tag:#8f7bff">midnight</span>
-      </article>
+  <!-- ═══ THE SHOOT — opaque curtain; vertical scroll drives a horizontal reel ═══ -->
+  <section class="shoot curtain" id="shoot" aria-label="Photography">
+    <div class="shoot-stage">
+      <div class="shoot-head">
+        <p class="eyebrow">The shoot</p>
+        <p class="shoot-count"><span class="shoot-idx">01</span> / 04</p>
+      </div>
+      <div class="shoot-track">
+        <figure class="shot">
+          <div class="shot-frame"><img src="/img/macro-960.webp" srcset="/img/macro-960.webp 960w, /img/macro.webp 1600w" sizes="(max-width: 700px) 86vw, 60vw" alt="Extreme close-up of condensation beads on the can's glowing lettering" loading="lazy" decoding="async" width="1600" height="894" /></div>
+          <figcaption><b>COLD TO THE CORE</b><span>Leaves the line at 2°C. The condensation isn't styling, it's a warning label.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="shot-frame"><img src="/img/trio-960.webp" srcset="/img/trio-960.webp 960w, /img/trio.webp 1920w" sizes="(max-width: 700px) 86vw, 60vw" alt="Three VOLTIC cans standing on wet black slate in a fine mist" loading="lazy" decoding="async" width="1920" height="1288" /></div>
+          <figcaption><b>THREE STRIKES</b><span>Three cans, one storm. Same voltage, different weather.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="shot-frame"><img src="/img/hero-can.webp" alt="The original studio portrait of the VOLTIC can, beaded with condensation" loading="lazy" decoding="async" width="800" height="1192" /></div>
+          <figcaption><b>THE FIRST PORTRAIT</b><span>Where the brand started: one studio shot and a lot of water.</span></figcaption>
+        </figure>
+        <figure class="shot shot--note">
+          <div class="shot-frame shot-note">
+            <p class="eyebrow">Behind the can</p>
+            <p class="shot-note-big">The scenery is <em>generated.</em> The can is <em>modeled.</em></p>
+            <p>Every frame of the can on this page is live geometry wearing a label typeset like real packaging. It can't drift, smear its text, or invent a calorie. A new flavor is a text edit.</p>
+            <a class="shot-link" href="/v1/">See the first version →</a>
+          </div>
+        </figure>
+      </div>
+      <div class="shoot-bar" aria-hidden="true"><i></i></div>
     </div>
   </section>
 
-  <!-- ═══ CTA ═══ -->
+  <!-- ═══ CTA — the can tilts to you and cracks open ═══ -->
   <section class="cta" id="cta">
-    <div class="cta-glow" aria-hidden="true"></div>
-    <div class="drops drops--near cta-drops" data-speed="0.2" aria-hidden="true"></div>
-    <p class="eyebrow reveal">Charge up</p>
-    <h2 class="cta-title reveal">FEEL THE<br />STORM</h2>
-    <a class="btn btn--charged btn--big reveal" href="#hero">Find a fridge near you</a>
-    <footer class="footer">
-      <p>VOLTIC is a fictional brand — a parallax showcase, imagery generated with AI. Built by Josh Escusa's studio.</p>
-    </footer>
+    <div class="cta-stage">
+      <div class="pad cta-pad" aria-hidden="true"></div>
+      <div class="cta-top">
+        <p class="eyebrow">Last thing</p>
+        <h2 class="cta-title"><span class="cta-a">CRACK<br />ONE OPEN</span><span class="cta-b accent-text">FEEL THE<br />STORM</span></h2>
+      </div>
+      <div class="cta-bottom">
+        <a class="btn btn--charged btn--big" href="#hero" data-recharge>Charge again ↑</a>
+        <p class="cta-hint" aria-hidden="true">Tap the can</p>
+        <footer class="footer">
+          <p>VOLTIC is a fictional brand, built as a motion showcase. The can is live three.js geometry; the photography is AI-generated. Built by Josh Escusa · <a href="https://smartdisruptions.com">Smart Disruptions</a> · <a href="/v1/">v1</a></p>
+        </footer>
+      </div>
+    </div>
   </section>
 
   </main>

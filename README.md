@@ -1,62 +1,79 @@
 # VOLTIC — Liquid Lightning
 
-A parallax showcase site for a fictional energy drink brand. Every image —
-including the 360° can rotation — was generated with AI via [kie.ai](https://kie.ai),
-then the site was built around the assets.
+A motion showcase for a fictional energy drink. **v2 (2026-11-06)** rebuilds the
+site around one idea: there is exactly one can, it's live geometry, and it
+travels the whole page.
 
-## The parallax inventory
+## v2: one can, the whole page
 
-- **Layered hero** — glow fields, ghost wordmark, can, and three droplet planes
-  moving at different scroll speeds *and* tracking the pointer at different depths.
-- **Real-time 3D turn + flip** — the can is live three.js geometry wearing an
-  authored label texture (site fonts, exact nutrition values), so every angle
-  is correct by construction. Scroll drives a full 360° with an eased reading
-  dwell on the back panel; you can also grab the can and spin it. The can
-  dissolves and a nutrition-facts card lands as the finale. `?classic=1`
-  serves the earlier scrubbed-frames version (generated turntable footage
-  pinned to real photos), which is also the automatic no-WebGL fallback.
-- **Full-bleed image parallax** — the splash and trio photos drift slower than
-  the page inside overflow-hidden frames.
-- **Scroll-scrubbed clip reveal** — the macro shot unmasks as it enters.
-- **Velocity-reactive marquee** — the ticker speeds up and skews with scroll velocity.
-- **Depth-staggered cards** — flavor cards drift apart on scroll and tilt in 3D on hover.
-- **Droplet fields** — the generated droplets-on-black plate, screen-blended and
-  tiled at three scales, masked away from the subject.
+The can renders once, into a fixed full-screen WebGL stage behind the content.
+Every section declares where the can should stand, and it moves between those marks
+as you scroll:
 
-All motion is transform-only, driven by one rAF loop writing a `--plx` CSS
-variable, with cached layout reads. **Deliberate policy:** this site exists to
-showcase motion, so `prefers-reduced-motion` is intentionally not honored —
-the regression suite asserts the animations still run under it.
-
-## Asset pipeline
-
-`tools/gen.mjs` generates everything through kie.ai with a hard credit ceiling:
-one hero can (nano-banana-2), a 5s turntable video from that exact image
-(kling-2.6 image-to-video) sliced to 60 JPEG frames with ffmpeg, three
-photoreal stills referencing the same can, and the droplet plate.
-Total spend: **229 credits** (200 budget + a Josh-approved 50 extension spent
-learning that no seeding strategy gets a video model to render both a faithful
-front and legible back micro-text — which is why the spin section flips to a
-typographic facts card instead of ever showing the generated back).
-
-## Renderer decision (2026-08-26)
-
-The spin section was prototyped three ways and judged side by side at
-[`/compare.html`](https://web-voltic.vercel.app/compare.html):
-
-| Approach | Verdict |
+| Scene | What the can does |
 |---|---|
-| Generative video (kie.ai) | Retired. No seeding strategy kept a product consistent *and* rendered legible micro-text. 577 credits spent learning it. Still reachable at `?classic=1`. |
-| **three.js, live** | **Ships.** ~250 KB, continuous rotation, drag-to-spin, label edits are text edits. |
+| **Hero** | Materializes with a lightning strike, sways, follows the pointer. Ambient bolts hit the lid. |
+| **Spin** | Pinned 360° with a reading dwell on the real nutrition panel; drag to spin. Then it steps aside for the facts card. |
+| **Charge** | An opaque "curtain" section (generated splash photo + counters) slides over the stage. The can isn't drawn while covered. |
+| **Circuit** | Docks at the edge, half off-screen, turning toward an ingredient list that powers on as current runs down a wire. |
+| **Flavors** | Pinned. Scroll, tap a chip, or swipe the can: the label swaps (Original → Citrus Overload → Storm Berry), the rim lights retint, and the **whole site's accent colors** follow (animated `@property` colors). |
+| **The shoot** | Curtain again: vertical scroll drives a horizontal reel of the generated photography, ending on *"the scenery is generated, the can is modeled."* |
+| **Crack** | The can tilts toward you, the tab lifts on its rivet, fizz sprays out of the mouth. Tap the can for more. |
+
+Also: a scroll "battery" in the nav, a velocity-reactive marquee that passes in
+front of the can, a ghost word behind it that changes per scene, haptics on phones
+that support them, and curtains with feathered edges that dissolve into the stage.
+
+**Flavors are a text edit.** `tools/label.html?f=original|citrus|storm` is the
+authored label; `node tools/make-label.mjs` renders all three label + glow textures.
+That's the build's thesis: anything that must be the same object twice gets
+modeled, not prompted.
+
+### Smooth on phones
+
+- Renders **on demand**: if nothing moved, nothing is drawn. Measured idle cost
+  with the can docked is ~2 ms of script per second, with zero style work.
+- Adaptive resolution: long frames drop the pixel ratio a notch (2× → 1×).
+- Every moving DOM layer is transform/opacity only; the loop writes a style only when
+  its value changed. Layout is measured on real resizes only (iOS toolbar resizes are
+  ignored). Placements are computed against `svh`/`lvh`, so the can doesn't jump
+  when the toolbar slides.
+- **No GPU (software WebGL)**: the studio photo stands in, and the live can boots
+  on the first scroll or tap, then renders on demand without the idle sway. Real
+  phones have GPUs and get the full show. `?full` forces it; `?flat` forces the photo.
+- Lighthouse mobile (local, simulated throttling): **99 / 100 / 100 / 100**,
+  TBT 0 ms, CLS 0.005.
+
+**Deliberate policy (unchanged from v1):** this site exists to showcase motion, so
+`prefers-reduced-motion` is intentionally not honored, and the regression suite
+asserts the show still runs under it. Everything else stays accessible: keyboard,
+contrast (axe-clean), landmarks, live regions, skip link.
+
+## v1
+
+The first version (parallax showcase, scrubbed can, renderer bake-off) is preserved
+at [`/v1/`](https://web-voltic.vercel.app/v1/), and `/v1/?classic=1` serves its
+original generated-frames spin. The side-by-side renderer comparison is still at
+[`/compare.html`](https://web-voltic.vercel.app/compare.html).
+
+| Approach | Verdict (2026-08-26) |
+|---|---|
+| Generative video (kie.ai) | Retired. No seeding strategy kept a product consistent *and* rendered legible micro-text. 577 credits spent learning it. |
+| **three.js, live** | **Ships.** Continuous rotation, drag-to-spin, label edits are text edits. v2 builds the whole site on it. |
 | Blender Cycles bake | Prettier light, but 2 MB of frames and 6° stepping. Scene kept at `tools/blender-can.py` for stills/print. |
 
 ## Dev
 
 ```bash
 npm install
-npm run dev        # vite dev server
-npm run build      # static build → dist/
-node tools/qa.mjs  # headless screenshots across all sections
+npm run dev                       # vite dev server
+npm run build                     # static build → dist/ (CSS + JS inlined)
+node tools/make-label.mjs         # re-render the three flavor labels
+node tools/regression.mjs <url>   # axe, errors, 404s, keyboard, viewports, scene assertions
+node tools/qa.mjs <url> <outdir>  # screenshots of every scene
 ```
 
-VOLTIC is not a real product. Imagery is AI-generated.
+Tools find Chromium via `tools/browser.mjs` (Mac playwright cache, `/opt/pw-browsers`,
+or `CHROME_PATH`).
+
+VOLTIC is not a real product. The photography is AI-generated; the can is not.

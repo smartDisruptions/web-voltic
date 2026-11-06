@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex" /><link rel="canonical" href="https://web-voltic.vercel.app/" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOLTIC — Liquid Lightning</title>
+  <meta name="description" content="VOLTIC energy. Liquid lightning in a matte black can. 200mg natural caffeine, zero sugar, all voltage." />
+  <meta property="og:title" content="VOLTIC — Liquid Lightning" />
+  <meta property="og:description" content="200mg natural caffeine. Zero sugar. All voltage." />
+  <meta property="og:image" content="https://web-voltic.vercel.app/img/og.jpg" />
+  <meta property="og:url" content="https://web-voltic.vercel.app/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#06080a" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M18 2 6 19h7l-3 11L26 12h-8l4-10z' fill='%232fd8f5'/%3E%3C/svg%3E" />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/anton-400.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/archivo-400.woff2" crossorigin />
+  <link rel="preload" as="image" href="/img/hero-can.webp" fetchpriority="high" />
+  <script type="module">(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const n of document.querySelectorAll('link[rel="modulepreload"]'))s(n);new MutationObserver(n=>{for(const i of n)if(i.type==="childList")for(const c of i.addedNodes)c.tagName==="LINK"&&c.rel==="modulepreload"&&s(c)}).observe(document,{childList:!0,subtree:!0});function o(n){const i={};return n.integrity&&(i.integrity=n.integrity),n.referrerPolicy&&(i.referrerPolicy=n.referrerPolicy),n.crossOrigin==="use-credentials"?i.credentials="include":n.crossOrigin==="anonymous"?i.credentials="omit":i.credentials="same-origin",i}function s(n){if(n.ep)return;n.ep=!0;const i=o(n);fetch(n.href,i)}})();const ae="modulepreload",ce=function(t){return"/"+t},C={},le=function(e,o,s){let n=Promise.resolve();if(o&&o.length>0){let c=function(u){return Promise.all(u.map(y=>Promise.resolve(y).then(E=>({status:"fulfilled",value:E}),E=>({status:"rejected",reason:E}))))};document.getElementsByTagName("link");const l=document.querySelector("meta[property=csp-nonce]"),I=(l==null?void 0:l.nonce)||(l==null?void 0:l.getAttribute("nonce"));n=c(o.map(u=>{if(u=ce(u),u in C)return;C[u]=!0;const y=u.endsWith(".css"),E=y?'[rel="stylesheet"]':"";if(document.querySelector(`link[href="${u}"]${E}`))return;const f=document.createElement("link");if(f.rel=y?"stylesheet":ae,y||(f.as="script"),f.crossOrigin="",f.href=u,I&&f.setAttribute("nonce",I),document.head.appendChild(f),y)return new Promise((se,ie)=>{f.addEventListener("load",se),f.addEventListener("error",()=>ie(new Error(`Unable to preload CSS for ${u}`)))})}))}function i(c){const l=new Event("vite:preloadError",{cancelable:!0});if(l.payload=c,window.dispatchEvent(l),!l.defaultPrevented)throw c}return n.then(c=>{for(const l of c||[])l.status==="rejected"&&i(l.reason);return e().catch(i)})},d={w:innerWidth,h:innerHeight},r={y:scrollY,smoothY:scrollY,vel:0,mx:0,my:0,smx:0,smy:0};addEventListener("scroll",()=>{r.y=scrollY},{passive:!0});addEventListener("pointermove",t=>{r.mx=t.clientX/d.w*2-1,r.my=t.clientY/d.h*2-1},{passive:!0});const A=(t,e,o)=>t+(e-t)*o,h=t=>Math.min(1,Math.max(0,t));let z=[],j=[],G=[];function q(){d.w=innerWidth,d.h=innerHeight;const t=e=>{let o=0;for(let s=e;s;s=s.offsetParent)o+=s.offsetTop;return o};if(z=[...document.querySelectorAll("[data-speed], [data-depth]")].map(e=>({el:e,speed:parseFloat(e.dataset.speed||0),depth:parseFloat(e.dataset.depth||0),mid:t(e)+e.offsetHeight/2})),j=[...document.querySelectorAll("[data-inner-speed]")].map(e=>{const o=e.parentElement;return{img:e,speed:parseFloat(e.dataset.innerSpeed),top:t(o),h:o.offsetHeight,range:Math.max(0,e.offsetHeight-o.offsetHeight)}}),G=[...document.querySelectorAll(".clip-reveal")].map(e=>({el:e,top:t(e),h:e.offsetHeight})),x){const e=x.parentElement;Y=t(e),ee=Y+e.offsetHeight}he()}const g=document.querySelector(".spin"),a=document.querySelector(".spin-canvas"),F=a==null?void 0:a.getContext("2d"),v=a?parseInt(a.dataset.frames,10):0,p=new Array(v),S=document.querySelector(".spin-deg-num"),D=document.querySelector(".spin-track-fill"),de=[...document.querySelectorAll(".spin-caption")];let K=0,V=1,_=!1,M=-1,$=-1;const R=.55,b=.66,ue=.76,O=.74,me=.86;let Z=180;const w=document.querySelector(".spin-card"),T=!new URLSearchParams(location.search).has("classic"),fe="/frames",H=new URLSearchParams(location.search).get("angle");let m=null;function N(t){return 360*(t+.115*Math.sin(2*Math.PI*t))}async function pe(){try{const{createCan3D:t}=await le(async()=>{const{createCan3D:o}=await import("/v1/assets/can3d-B0muuTcm.js");return{createCan3D:o}},[]),e=document.createElement("div");e.className="spin-3d",a.parentElement.insertBefore(e,a),a.style.display="none",m=t(e),Z=360,document.querySelector(".spin-ghost").textContent="360°",addEventListener("resize",()=>m.resize()),M=-2}catch(t){console.warn("3D can unavailable, keeping frames:",t),J()}}function he(){g&&(K=g.offsetTop,V=g.offsetHeight-d.h)}function J(){if(_||!v)return;_=!0;const t=n=>{const i=new Image;i.src=`${fe}/f${String(n+1).padStart(2,"0")}.webp`,i.onload=()=>{n===0&&(a.width=i.naturalWidth,a.height=i.naturalHeight,Q(0,!0))},p[n]=i};for(let n=0;n<v;n+=4)t(n);const e=[];for(let n=0;n<v;n++)n%4&&e.push(n);const o=window.requestIdleCallback||(n=>setTimeout(n,200)),s=()=>{e.splice(0,3).forEach(t),e.length&&o(s,{timeout:400})};o(s,{timeout:800})}function ye(t){var e,o;for(let s=0;s<v;s++){if((e=p[t-s])!=null&&e.complete&&p[t-s].naturalWidth)return p[t-s];if((o=p[t+s])!=null&&o.complete&&p[t+s].naturalWidth)return p[t+s]}return null}function Q(t,e=!1){if(!F||!e&&t===M)return;const o=ye(t);o&&(M=t,F.clearRect(0,0,a.width,a.height),F.drawImage(o,0,0,a.width,a.height))}let W="",k=-1,U=-1,X=-1;function ge(){if(!g)return;const t=h((r.smoothY-K)/V),e=h(t/R);m?(m.setAngle(H!==null?+H:N(e)),m.render()):Q(Math.round(e*(v-1)));const o=Math.round((t<=b?1:h(1-(t-b)/(ue-b)))*100)/100;if(o!==U&&(U=o,(m?a.previousElementSibling:a).style.opacity=o,S&&(S.parentElement.style.opacity=o)),S){const n=String(Math.round(m?N(e):e*Z)).padStart(3,"0");n!==W&&(W=n,S.textContent=n)}if(D){const n=Math.round(t*200)/2;n!==k&&(k=n,D.style.width=`${n}%`)}if(w){const n=h((t-O)/(me-O)),i=Math.round((1-Math.pow(1-n,3))*200)/200;i!==X&&(X=i,w.style.opacity=i,w.style.transform=`translate(-50%, -50%) translateY(${((1-i)*48).toFixed(1)}px) scale(${(.94+i*.06).toFixed(3)})`,w.style.pointerEvents=i>.5?"auto":"none")}const s=t<.31?0:t<R?1:-1;s!==$&&($=s,de.forEach((n,i)=>n.classList.toggle("is-live",i===s)))}if(g){const t=()=>T?pe():J(),e=()=>new IntersectionObserver((o,s)=>{o.some(n=>n.isIntersecting)&&(t(),s.disconnect())},{rootMargin:T?"160% 0%":"80% 0%"}).observe(g);document.readyState==="complete"?e():addEventListener("load",e,{once:!0})}const x=document.querySelector(".marquee-track");let L=0,P=0,Y=0,ee=0;for(const t of document.querySelectorAll("[data-tilt]"))t.addEventListener("pointermove",e=>{const o=t.getBoundingClientRect(),s=(e.clientX-o.left)/o.width-.5,n=(e.clientY-o.top)/o.height-.5;t.style.setProperty("--tiltT",`perspective(700px) rotateY(${s*10}deg) rotateX(${n*-10}deg) translateZ(6px)`)}),t.addEventListener("pointerleave",()=>t.style.removeProperty("--tiltT"));let B=!0;function ve(){const t=r.smoothY+d.h/2;for(const e of z){const o=e.speed?(t-e.mid)*e.speed:0,s=e.depth?r.smx*e.depth*-220:0,n=e.depth?r.smy*e.depth*-140:0;e.el.style.setProperty("--plx",`translate3d(${s.toFixed(2)}px, ${(o+n).toFixed(2)}px, 0)`)}for(const e of j){const o=h((r.smoothY+d.h-e.top)/(d.h+e.h));e.img.style.transform=`translate3d(0, ${(-e.range*o).toFixed(2)}px, 0)`}for(const e of G){const o=h((r.smoothY+d.h-e.top)/(d.h*.7));e.el.style.setProperty("--clip",((1-o)*100).toFixed(2))}ge()}function te(){const t=r.smoothY;r.smoothY=A(r.smoothY,r.y,.18),Math.abs(r.y-r.smoothY)<.05&&(r.smoothY=r.y),r.vel=r.smoothY-t,r.smx=A(r.smx,r.mx,.06),r.smy=A(r.smy,r.my,.06),Math.abs(r.mx-r.smx)<5e-4&&(r.smx=r.mx),Math.abs(r.my-r.smy)<5e-4&&(r.smy=r.my);const e=r.smoothY!==r.y||r.vel!==0||r.smx!==r.mx||r.smy!==r.my||(m?m.isDragging():!1);if((e||B)&&ve(),B=e,x&&r.smoothY+d.h>Y&&r.smoothY<ee){P||(P=x.scrollWidth/2),L=(L-(.8+Math.min(14,Math.abs(r.vel)*.6)))%P;const o=Math.max(-8,Math.min(8,r.vel*.35));x.style.transform=`translate3d(${L.toFixed(2)}px, 0, 0) skewX(${o.toFixed(2)}deg)`}requestAnimationFrame(te)}const ne=[...document.querySelectorAll(".reveal")];ne.forEach(t=>{const e=[...t.parentElement.querySelectorAll(":scope > .reveal")];t.style.setProperty("--stagger",`${e.indexOf(t)*.09}s`)});const oe=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(e.target.classList.add("is-in"),oe.unobserve(e.target))},{threshold:.15});ne.forEach(t=>oe.observe(t));function Ee(t){const e=parseInt(t.dataset.count,10),o=performance.now(),s=1400,n=i=>{const c=h((i-o)/s);t.textContent=String(Math.round(e*(1-Math.pow(1-c,3)))),c<1&&requestAnimationFrame(n)};requestAnimationFrame(n)}const xe=[...document.querySelectorAll(".count")],re=new IntersectionObserver(t=>{for(const e of t)e.isIntersecting&&(Ee(e.target),re.unobserve(e.target))},{threshold:.6});xe.forEach(t=>re.observe(t)),q(),addEventListener("resize",()=>requestAnimationFrame(q)),addEventListener("load",q),requestAnimationFrame(te);</script>
+  <style>@font-face{font-family:Anton;font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/anton-400.woff2) format("woff2")}@font-face{font-family:Archivo;font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/archivo-400.woff2) format("woff2")}@font-face{font-family:Archivo;font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/archivo-500.woff2) format("woff2")}@font-face{font-family:Archivo;font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/archivo-700.woff2) format("woff2")}:root{--ink: #06080a;--ink-2: #0a0e11;--cyan: #2fd8f5;--lime: #b7e93c;--violet: #8f7bff;--paper: #eef4f6;--dim: #7e8d96;--line: rgba(238, 244, 246, .08);--current: linear-gradient(160deg, var(--cyan), var(--lime));--display: "Anton", "Arial Narrow", sans-serif;--body: "Archivo", "Helvetica Neue", sans-serif}*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--ink);color:var(--paper);font:400 16px/1.6 var(--body);overflow-x:hidden;-webkit-font-smoothing:antialiased}::selection{background:var(--lime);color:var(--ink)}:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px}.skip-link{position:fixed;z-index:100;left:16px;top:-60px;background:var(--cyan);color:var(--ink);font:700 13px/1 var(--body);letter-spacing:.08em;padding:12px 18px;border-radius:4px;text-decoration:none;transition:top .2s ease}.skip-link:focus-visible{top:16px}img{max-width:100%;height:auto;display:block}.grain{position:fixed;top:-50%;right:-50%;bottom:-50%;left:-50%;z-index:60;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");opacity:.05;mix-blend-mode:overlay;animation:grain 9s steps(6) infinite}@keyframes grain{0%,to{transform:translate(0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-2%,-3%)}80%{transform:translate(4%,4%)}}.eyebrow{font:500 12px/1 var(--body);letter-spacing:.32em;text-transform:uppercase;color:var(--cyan)}.giant{font-family:var(--display);font-size:clamp(52px,8.5vw,128px);line-height:.92;letter-spacing:.01em;font-weight:400;margin:18px 0 22px}.giant em{font-style:normal;background:var(--current);-webkit-background-clip:text;background-clip:text;color:transparent}.body{color:var(--dim);max-width:44ch}.btn{display:inline-block;font:700 13px/1 var(--body);letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:18px 30px;border-radius:3px;transition:transform .25s cubic-bezier(.2,.9,.3,1.4),box-shadow .25s ease}.btn--charged{background:var(--current);color:var(--ink);box-shadow:0 0 #2fd8f500}.btn--charged:hover{transform:translateY(-2px) skew(-3deg);box-shadow:0 8px 40px #2fd8f573}.btn--ghost{color:var(--paper);border:1px solid var(--line)}.btn--ghost:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-2px)}.btn--big{font-size:15px;padding:24px 44px}.reveal{opacity:0;transform:translateY(36px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:var(--stagger, 0s)}.reveal.is-in{opacity:1;transform:none}.nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:22px clamp(20px,4vw,56px);mix-blend-mode:normal}.nav-logo{display:flex;align-items:center;gap:9px;font-family:var(--display);font-size:22px;letter-spacing:.06em;color:var(--paper);text-decoration:none}.nav-logo svg{color:var(--cyan);filter:drop-shadow(0 0 6px rgba(47,216,245,.8))}.nav-links{display:flex;align-items:center;gap:clamp(14px,3vw,34px)}.nav-links a{font:500 12px/1 var(--body);letter-spacing:.22em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color .2s}.nav-links a:hover{color:var(--paper)}.nav-links .nav-cta{color:var(--ink);background:var(--lime);padding:10px 16px;border-radius:3px}.nav-links .nav-cta:hover{color:var(--ink);box-shadow:0 0 24px #b7e93c80}.hero{position:relative;height:100svh;display:grid;place-items:center;overflow:hidden}.hero>.hero-can-wrap,.hero>.hero-copy{grid-area:1 / 1}.hero-glow{position:absolute;border-radius:50%;will-change:transform}.hero-glow--cyan{width:60vmax;height:60vmax;left:-14vmax;top:-20vmax;background:radial-gradient(circle,rgba(47,216,245,.14) 0%,rgba(47,216,245,.05) 40%,transparent 68%)}.hero-glow--lime{width:52vmax;height:52vmax;right:-16vmax;bottom:-18vmax;background:radial-gradient(circle,rgba(183,233,60,.11) 0%,rgba(183,233,60,.04) 40%,transparent 68%)}.hero-ghost{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:clamp(120px,24vw,380px);letter-spacing:.02em;color:transparent;-webkit-text-stroke:1px rgba(238,244,246,.09);-webkit-user-select:none;user-select:none;will-change:transform}.hero-can-wrap{position:relative;width:clamp(240px,26vw,380px);will-change:transform;animation:bob 6s ease-in-out infinite}@keyframes bob{0%,to{translate:0 0}50%{translate:0 -14px}}.hero-can{width:100%;mask-image:radial-gradient(56% 58% at 50% 47%,#000 58%,transparent 88%);-webkit-mask-image:radial-gradient(56% 58% at 50% 47%,#000 58%,transparent 88%)}.hero-can-glow{position:absolute;top:12%;right:-18%;bottom:4%;left:-18%;background:radial-gradient(50% 42% at 50% 55%,rgba(47,216,245,.18),transparent 70%);filter:blur(30px);z-index:-1}[data-speed],[data-depth]{transform:var(--plx, none)}[data-tilt]{transform:var(--plx, none) var(--tiltT, )}.drops{position:absolute;top:-12%;right:-12%;bottom:-12%;left:-12%;background-size:760px auto;background-position:center;mix-blend-mode:screen;pointer-events:none;will-change:transform;mask-image:radial-gradient(58% 52% at 50% 46%,transparent 28%,#000 78%);-webkit-mask-image:radial-gradient(58% 52% at 50% 46%,transparent 28%,#000 78%)}.drops--far{opacity:.16;background-image:url(/img/drops-far.webp);background-size:520px auto;transform:var(--plx, none)}.drops--mid{opacity:.22;background-image:url(/img/drops-mid.webp);transform:var(--plx, none) rotate(180deg)}.drops--near{opacity:.3;background-image:url(/img/drops-near.webp);background-size:1200px auto;transform:var(--plx, none) scale(1.06)}.hero-copy{position:relative;z-index:5;align-self:end;justify-self:start;padding:0 clamp(20px,4vw,56px) 10svh;max-width:640px}.hero-title{font-family:var(--display);font-weight:400;font-size:clamp(64px,10vw,150px);line-height:.9;letter-spacing:.01em;margin:16px 0 20px;display:grid}.hero-title-accent{background:var(--current);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(47,216,245,.35))}.hero-sub{color:var(--dim);max-width:40ch;margin-bottom:30px}.hero-actions{display:flex;gap:14px;flex-wrap:wrap}.scroll-cue{position:absolute;bottom:26px;right:clamp(20px,4vw,56px);display:flex;align-items:center;gap:12px;color:var(--dim)}.scroll-cue p{font:500 11px/1 var(--body);letter-spacing:.28em;text-transform:uppercase;writing-mode:vertical-rl}.scroll-cue span{width:1px;height:64px;background:linear-gradient(var(--cyan),transparent);animation:cue 1.8s ease-in-out infinite;transform-origin:top}@keyframes cue{0%{transform:scaleY(0)}45%{transform:scaleY(1)}to{transform:scaleY(1);opacity:0}}.spin{height:250vh;position:relative}.spin-stage{position:sticky;top:0;height:100svh;display:grid;place-items:center;overflow:hidden}.spin-bg{position:absolute;top:0;right:0;bottom:0;left:0;background:radial-gradient(60% 50% at 50% 60%,rgba(47,216,245,.09),transparent 70%),var(--ink-2)}.spin-ghost{position:absolute;font-family:var(--display);font-size:clamp(160px,34vw,560px);color:transparent;-webkit-text-stroke:1px rgba(238,244,246,.05);-webkit-user-select:none;user-select:none}.spin-canvas{position:relative;z-index:3;height:min(78svh,900px);width:auto;aspect-ratio:2 / 3;box-shadow:0 30px 60px #00000080;border-radius:10px}.spin-3d{position:relative;z-index:3;height:min(78svh,900px);aspect-ratio:2 / 3;cursor:grab}.spin-3d:active{cursor:grabbing}.spin-hud{position:absolute;z-index:4;bottom:5svh;left:50%;translate:-50% 0;display:grid;justify-items:center;gap:12px}.spin-deg{font-family:var(--display);font-size:30px;color:var(--cyan);text-shadow:0 0 18px rgba(47,216,245,.6);font-variant-numeric:tabular-nums}.spin-track{width:180px;height:2px;background:var(--line);border-radius:2px;overflow:hidden}.spin-track-fill{height:100%;width:0%;background:var(--current)}.spin-caption{position:absolute;z-index:4;left:clamp(20px,5vw,90px);top:50%;translate:0 -50%;max-width:340px;opacity:0;transform:translateY(30px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}.spin-caption:nth-of-type(2n){left:auto;right:clamp(20px,5vw,90px);text-align:right}.spin-caption.is-live{opacity:1;transform:none}.spin-caption h2{font-family:var(--display);font-weight:400;font-size:clamp(38px,4.6vw,72px);line-height:.95}.spin-caption p{color:var(--dim);margin-top:10px}.spin-card{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;width:min(430px,88vw);background:color-mix(in srgb,var(--ink) 84%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:28px 30px 22px;box-shadow:0 30px 80px #0000008c,0 0 60px #2fd8f50f;will-change:transform,opacity}.spin-card h2{font-family:var(--display);font-weight:400;font-size:clamp(38px,4.5vw,56px);line-height:.95;margin-top:12px}.facts{margin-top:12px;border-top:2px solid var(--paper)}.facts>div{display:flex;justify-content:space-between;align-items:baseline;gap:18px;padding:6px 0;border-bottom:1px solid var(--line)}.facts dt{font:500 11px/1.4 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}.facts dd{font:700 13px/1.4 var(--body);color:var(--paper);font-variant-numeric:tabular-nums;white-space:nowrap}.facts-note{font-size:12px}.splash{position:relative;min-height:130svh;display:grid;place-items:center;overflow:hidden}.splash-media{position:absolute;top:-12%;right:0;bottom:-12%;left:0;will-change:transform}.splash-media img{width:100%;height:100%;object-fit:cover}.splash-tint{position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,var(--ink) 0%,transparent 22%,transparent 72%,var(--ink) 100%),radial-gradient(70% 60% at 50% 50%,transparent 30%,rgba(6,8,10,.72) 100%)}.splash-drops{top:-10%;right:-10%;bottom:-10%;left:-10%;opacity:.4}.splash-copy{position:relative;z-index:3;text-align:center;padding:22svh 20px;filter:drop-shadow(0 2px 18px rgba(3,4,5,.95)) drop-shadow(0 0 40px rgba(3,4,5,.7))}.splash-copy .giant em{background:linear-gradient(105deg,#7fe9ff,#a5f0d8 45%,#d2f76a);-webkit-background-clip:text;background-clip:text}.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(26px,5vw,72px);margin-top:48px}.stat dt{font:500 11px/1 var(--body);letter-spacing:.26em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}.stat dd{font-family:var(--display);font-size:clamp(44px,6vw,84px);line-height:1;font-variant-numeric:tabular-nums}.stat dd i{font-style:normal;font-size:.45em;color:var(--cyan)}.macro{padding:clamp(90px,14vh,180px) clamp(20px,4vw,56px);background:var(--ink)}.macro-grid{display:grid;gap:clamp(40px,6vw,100px);grid-template-columns:minmax(300px,5fr) 7fr;align-items:center;max-width:1440px;margin:0 auto}.macro-list{list-style:none;margin-top:34px;display:grid;gap:0}.macro-list li{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:18px 0;border-top:1px solid var(--line)}.macro-list b{font:700 15px/1.3 var(--body)}.macro-list span{color:var(--dim);font-size:14px;text-align:right}.macro-fig{position:relative;overflow:hidden;border-radius:8px;aspect-ratio:16 / 10}.macro-fig img{width:100%;height:118%;object-fit:cover;will-change:transform}.clip-reveal{clip-path:inset(0 calc(var(--clip, 100) * .6%) 0 0 round 8px)}.marquee{overflow:hidden;padding:34px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--ink-2)}.marquee-track{display:flex;white-space:nowrap;will-change:transform}.marquee-track span{font-family:var(--display);font-size:clamp(34px,5vw,72px);color:transparent;-webkit-text-stroke:1px rgba(238,244,246,.25);letter-spacing:.04em}.flavors{position:relative;padding-bottom:clamp(90px,14vh,180px);background:var(--ink)}.flavors-banner{height:clamp(300px,55vh,620px);overflow:hidden;position:relative}.flavors-banner img{width:100%;height:124%;object-fit:cover;object-position:50% 22%;will-change:transform}.flavors-banner:after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,var(--ink) 0%,transparent 25%,transparent 70%,var(--ink) 100%)}.flavors-head{text-align:center;margin:clamp(50px,8vh,100px) 20px 60px}.flavor-cards{display:grid;grid-template-columns:repeat(3,minmax(240px,340px));justify-content:center;gap:clamp(18px,3vw,40px);padding:0 clamp(20px,4vw,56px)}.flavor-card{position:relative;background:linear-gradient(165deg,#eef4f60a,#eef4f603);border:1px solid var(--line);border-radius:10px;padding:34px 28px 30px;will-change:transform;transition:border-color .3s ease}.flavor-card:hover{border-color:var(--tag, var(--cyan))}.flavor-num{font-family:var(--display);font-size:15px;color:var(--dim)}.flavor-card h3{font-family:var(--display);font-weight:400;font-size:clamp(30px,3vw,44px);line-height:.95;margin:14px 0}.flavor-card p{color:var(--dim);font-size:14.5px;min-height:4.2em}.flavor-tag{display:inline-block;margin-top:18px;font:700 10px/1 var(--body);letter-spacing:.3em;text-transform:uppercase;color:var(--tag, var(--cyan));border:1px solid color-mix(in srgb,var(--tag, var(--cyan)) 50%,transparent);border-radius:20px;padding:7px 14px}.cta{position:relative;overflow:hidden;min-height:90svh;display:grid;place-content:center;justify-items:center;text-align:center;background:var(--ink-2)}.cta-glow{position:absolute;top:0;right:0;bottom:0;left:0;background:radial-gradient(55% 48% at 50% 62%,rgba(183,233,60,.1),transparent 70%),radial-gradient(40% 40% at 50% 30%,rgba(47,216,245,.08),transparent 70%)}.cta-drops{opacity:.35}.cta-title{position:relative;font-family:var(--display);font-weight:400;font-size:clamp(80px,14vw,220px);line-height:.9;margin:20px 0 40px;background:var(--current);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 34px rgba(47,216,245,.25))}.footer{position:relative;margin-top:12svh;padding:0 20px}.footer p{color:var(--dim);font-size:12.5px;max-width:62ch}@media(max-width:640px){.nav-links a:not(.nav-cta){display:none}.hero{height:auto;min-height:100svh;grid-template-rows:minmax(0,1fr) auto;padding-top:76px;row-gap:4px}.hero>.hero-can-wrap{grid-area:1 / 1;align-self:center}.hero>.hero-copy{grid-area:2 / 1;align-self:end}.hero-can-wrap{width:clamp(180px,50vw,240px)}.hero-ghost{font-size:36vw;align-items:flex-start;padding-top:16svh}.hero-copy{padding-bottom:7svh}.hero-title{font-size:clamp(48px,14.5vw,64px)}.scroll-cue{display:none}}@media(max-width:960px){.macro-grid{grid-template-columns:1fr}.flavor-cards{grid-template-columns:minmax(240px,420px)}.spin-caption{top:auto;bottom:16svh;max-width:260px}.spin-hud{bottom:2.5svh}.hero-can-wrap{width:clamp(200px,44vw,300px)}}</style>
+<link rel="prefetch" href="/v1/assets/can3d-B0muuTcm.js" as="script" crossorigin><link rel="prefetch" href="/tex/label.webp" as="image"><link rel="prefetch" href="/tex/glow.webp" as="image"><link rel="prefetch" href="/tex/drops-height.webp" as="image"><link rel="prefetch" href="/tex/drops-rough.webp" as="image"></head>
+<body>
+
+  <a class="skip-link" href="#content">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-logo" href="#hero" aria-label="Voltic home">
+      <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path d="M18 2 6 19h7l-3 11L26 12h-8l4-10z" fill="currentColor"/></svg>
+      <span>VOLTIC</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#spin">Spin</a>
+      <a href="#charge">Charge</a>
+      <a href="#flavors">Flavors</a>
+      <a href="#cta" class="nav-cta">Get Charged</a>
+    </nav>
+  </header>
+
+  <main id="content">
+
+  <!-- ═══ HERO — layered mouse + scroll parallax ═══ -->
+  <section class="hero" id="hero">
+    <div class="hero-glow hero-glow--cyan" data-depth="0.03" aria-hidden="true"></div>
+    <div class="hero-glow hero-glow--lime" data-depth="0.05" aria-hidden="true"></div>
+
+    <div class="hero-ghost" data-depth="0.06" data-speed="-0.08" aria-hidden="true">VOLTIC</div>
+
+    <div class="hero-can-wrap" data-depth="0.11" data-speed="0.22">
+      <img class="hero-can" src="/img/hero-can.webp" alt="Matte black VOLTIC energy drink can covered in condensation, with a glowing cyan-to-lime wordmark" width="720" height="1080" fetchpriority="high" decoding="async" />
+      <div class="hero-can-glow" aria-hidden="true"></div>
+    </div>
+
+    <!-- droplet field: three depths of generated droplet imagery, screen-blended -->
+    <div class="drops drops--far"  data-depth="0.04" data-speed="-0.06" aria-hidden="true"></div>
+    <div class="drops drops--mid"  data-depth="0.09" data-speed="0.1"  aria-hidden="true"></div>
+    <div class="drops drops--near" data-depth="0.16" data-speed="0.3"  aria-hidden="true"></div>
+
+    <div class="hero-copy" data-speed="0.06">
+      <p class="eyebrow reveal">New · 473ml · Zero sugar</p>
+      <h1 class="hero-title">
+        <span class="reveal">LIQUID</span>
+        <span class="reveal hero-title-accent">LIGHTNING</span>
+      </h1>
+      <p class="hero-sub reveal">200mg of natural caffeine wrapped in matte black aluminum.
+      Cold, sharp, and completely out of line.</p>
+      <div class="hero-actions reveal">
+        <a class="btn btn--charged" href="#spin">See it spin</a>
+        <a class="btn btn--ghost" href="#charge">What's inside</a>
+      </div>
+    </div>
+
+    <div class="scroll-cue" aria-hidden="true">
+      <span></span>
+      <p>Scroll to charge</p>
+    </div>
+  </section>
+
+  <!-- ═══ 360° — pinned, scroll-scrubbed rotation ═══ -->
+  <section class="spin" id="spin">
+    <div class="spin-stage">
+      <div class="spin-bg" aria-hidden="true"></div>
+      <div class="spin-ghost" aria-hidden="true">180°</div>
+
+      <canvas class="spin-canvas" role="img" data-frames="60" width="720" height="1080"
+        aria-label="VOLTIC can turning to show its nutrition facts panel as you scroll"></canvas>
+
+      <div class="spin-hud" aria-hidden="true">
+        <div class="spin-deg"><span class="spin-deg-num">000</span>°</div>
+        <div class="spin-track"><div class="spin-track-fill"></div></div>
+      </div>
+
+      <div class="spin-caption" data-step="0"><h2>EVERY ANGLE.</h2><p>One can. No bad side.</p></div>
+      <div class="spin-caption" data-step="1"><h2>ALL VOLTAGE.</h2><p>And when it turns its back—</p></div>
+
+      <div class="spin-card">
+        <p class="eyebrow">The flip side</p>
+        <h2>ZERO SUGAR.</h2>
+        <dl class="facts">
+          <div><dt>Calories</dt><dd>5</dd></div>
+          <div><dt>Total sugars</dt><dd>0 g</dd></div>
+          <div><dt>Caffeine</dt><dd>200 mg</dd></div>
+          <div><dt>Taurine</dt><dd>1000 mg</dd></div>
+          <div><dt>L-Theanine</dt><dd>100 mg</dd></div>
+          <div><dt>B3 · B6 · B12</dt><dd>16 · 1.7 · 2.4</dd></div>
+          <div><dt>Sodium · Potassium</dt><dd>105 · 70 mg</dd></div>
+        </dl>
+        <p class="facts-note">Per 473 ml. Sweetness is a crutch.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SPLASH — full-bleed parallax + counters ═══ -->
+  <section class="splash" id="charge">
+    <div class="splash-media" data-speed="0.18" aria-hidden="true">
+      <img src="/img/splash.webp" alt="" loading="lazy" width="1536" height="1024" />
+    </div>
+    <div class="splash-tint" aria-hidden="true"></div>
+    <div class="drops drops--mid splash-drops" data-speed="0.34" aria-hidden="true"></div>
+
+    <div class="splash-copy">
+      <p class="eyebrow reveal">The charge</p>
+      <h2 class="giant reveal">DETONATE<br /><em>YOUR LIMITS</em></h2>
+      <dl class="stats">
+        <div class="stat reveal"><dt>Natural caffeine</dt><dd><span class="count" data-count="200">0</span><i>mg</i></dd></div>
+        <div class="stat reveal"><dt>Sugar</dt><dd><span class="count" data-count="0">0</span><i>g</i></dd></div>
+        <div class="stat reveal"><dt>Calories</dt><dd><span class="count" data-count="5">0</span><i>&nbsp;</i></dd></div>
+        <div class="stat reveal"><dt>Voltage</dt><dd><span class="count" data-count="100">0</span><i>%</i></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ═══ MACRO — clip reveal + inner parallax ═══ -->
+  <section class="macro">
+    <div class="macro-grid">
+      <div class="macro-copy">
+        <p class="eyebrow reveal">Served at 2°C</p>
+        <h2 class="giant reveal">COLD TO<br /><em>THE CORE</em></h2>
+        <p class="body reveal">Every can leaves the line at two degrees and stays honest about it —
+        the condensation isn't styling, it's a warning label.</p>
+        <ul class="macro-list">
+          <li class="reveal"><b>Electrolyte stack</b><span>sodium · potassium · magnesium</span></li>
+          <li class="reveal"><b>B-vitamin surge</b><span>B3 · B6 · B12 at full send</span></li>
+          <li class="reveal"><b>L-theanine curve</b><span>the spike without the shatter</span></li>
+        </ul>
+      </div>
+      <figure class="macro-fig clip-reveal">
+        <img src="/img/macro.webp" data-inner-speed="0.14" alt="Extreme close-up of condensation beads on the VOLTIC can's glowing cyan lettering" loading="lazy" width="1536" height="864" />
+      </figure>
+    </div>
+  </section>
+
+  <!-- ═══ MARQUEE — scroll-velocity reactive ═══ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>VOLTIC ⚡ LIQUID LIGHTNING ⚡ ZERO SUGAR ⚡ ALL VOLTAGE ⚡&nbsp;</span>
+      <span>VOLTIC ⚡ LIQUID LIGHTNING ⚡ ZERO SUGAR ⚡ ALL VOLTAGE ⚡&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- ═══ FLAVORS — depth-staggered cards over trio banner ═══ -->
+  <section class="flavors" id="flavors">
+    <div class="flavors-banner">
+      <img src="/img/trio.webp" data-inner-speed="0.12" alt="Three VOLTIC cans standing on wet black slate in a fine mist" loading="lazy" width="1536" height="1024" />
+    </div>
+    <div class="flavors-head">
+      <p class="eyebrow reveal">Three strikes</p>
+      <h2 class="giant reveal">PICK YOUR<br /><em>POISON</em></h2>
+    </div>
+    <div class="flavor-cards">
+      <article class="flavor-card reveal" data-speed="0.05" data-tilt>
+        <span class="flavor-num">01</span>
+        <h3>VOLT<br />ORIGINAL</h3>
+        <p>The matte black standard. Citrus edge, metallic finish, no apologies.</p>
+        <span class="flavor-tag" style="--tag:#2fd8f5">signature</span>
+      </article>
+      <article class="flavor-card reveal" data-speed="-0.03" data-tilt>
+        <span class="flavor-num">02</span>
+        <h3>CITRUS<br />OVERLOAD</h3>
+        <p>Lime pushed past the legal limit. Bright enough to read by.</p>
+        <span class="flavor-tag" style="--tag:#b7e93c">loud</span>
+      </article>
+      <article class="flavor-card reveal" data-speed="0.09" data-tilt>
+        <span class="flavor-num">03</span>
+        <h3>STORM<br />BERRY</h3>
+        <p>Dark fruit under a live current. For the last set and the long night.</p>
+        <span class="flavor-tag" style="--tag:#8f7bff">midnight</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta" id="cta">
+    <div class="cta-glow" aria-hidden="true"></div>
+    <div class="drops drops--near cta-drops" data-speed="0.2" aria-hidden="true"></div>
+    <p class="eyebrow reveal">Charge up</p>
+    <h2 class="cta-title reveal">FEEL THE<br />STORM</h2>
+    <a class="btn btn--charged btn--big reveal" href="#hero">Find a fridge near you</a>
+    <footer class="footer">
+      <p>VOLTIC is a fictional brand — a parallax showcase, imagery generated with AI. Built by Josh Escusa's studio.</p>
+    </footer>
+  </section>
+
+  </main>
+
+</body>
+</html>

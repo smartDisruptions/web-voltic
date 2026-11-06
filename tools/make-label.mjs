@@ -1,25 +1,31 @@
 #!/usr/bin/env node
-/** Render label.html → public/tex/label.webp (albedo) + glow.webp (emissive). */
-import { chromium } from 'playwright-core';
+/**
+ * Render label.html → public/tex/label-<flavor>.webp (albedo) and
+ * glow-<flavor>.webp (emissive) for every flavor. The can's whole wardrobe
+ * comes from one authored HTML file.
+ */
 import { join } from 'node:path';
-import { homedir } from 'node:os';
 import { mkdirSync } from 'node:fs';
 import sharp from 'sharp';
+import { launch } from './browser.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
-mkdirSync(join(ROOT, 'public', 'tex'), { recursive: true });
-const exe = join(homedir(), 'Library/Caches/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-mac-arm64/chrome-headless-shell');
-const b = await chromium.launch({ executablePath: exe });
+const OUT = join(ROOT, 'public', 'tex');
+mkdirSync(OUT, { recursive: true });
+const b = await launch();
 const p = await b.newPage({ viewport: { width: 2048, height: 1600 } });
-await p.goto('file://' + join(ROOT, 'tools', 'label.html'));
-await p.waitForTimeout(600); // fonts
 
-const albedo = await p.screenshot();
-await p.evaluate(() => document.body.classList.add('glow'));
-await p.waitForTimeout(100);
-const glow = await p.screenshot();
+for (const f of ['original', 'citrus', 'storm']) {
+  await p.goto('file://' + join(ROOT, 'tools', 'label.html') + '?f=' + f);
+  await p.evaluate(() => document.fonts.ready);
+  await p.waitForTimeout(300);
+  const albedo = await p.screenshot();
+  await p.evaluate(() => document.body.classList.add('glow'));
+  await p.waitForTimeout(100);
+  const glow = await p.screenshot();
+  await sharp(albedo).webp({ quality: 90 }).toFile(join(OUT, `label-${f}.webp`));
+  // the glow pass is mostly black — half resolution is visually identical
+  await sharp(glow).resize(1024).webp({ quality: 86 }).toFile(join(OUT, `glow-${f}.webp`));
+  console.log('rendered', f);
+}
 await b.close();
-
-await sharp(albedo).webp({ quality: 92 }).toFile(join(ROOT, 'public', 'tex', 'label.webp'));
-await sharp(glow).webp({ quality: 88 }).toFile(join(ROOT, 'public', 'tex', 'glow.webp'));
-console.log('textures written to public/tex/');
