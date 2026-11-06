@@ -2,13 +2,16 @@
 <!-- Cylinder-unwrap label texture: 2048px = full 360° circumference.
      Front face centered at x=512 (u=0.25), back panel at x=1536 (u=0.75),
      so the UV seam lands on a blank flank. Rendered by tools/make-label.mjs
-     into label.png (albedo) and glow.png (emissive: wordmark only). -->
+     into label.png (albedo) and glow.png (emissive: wordmark only).
+     Flavors: ?f=original|citrus|storm swaps the current's colors and the
+     flavor line — a new flavor is a text edit, never a regeneration. -->
 <meta charset="utf-8">
 <style>
   @font-face { font-family: 'Anton'; src: url('../public/fonts/anton-400.woff2') format('woff2'); }
   @font-face { font-family: 'Archivo'; font-weight: 400; src: url('../public/fonts/archivo-400.woff2') format('woff2'); }
   @font-face { font-family: 'Archivo'; font-weight: 700; src: url('../public/fonts/archivo-700.woff2') format('woff2'); }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --c1: #a9e42f; --c2: #4ee39a; --c3: #38d6f8; --bolt: #3ae4fb; }
   body { width: 2048px; height: 1600px; background: #101314; position: relative; overflow: hidden;
          font-family: Archivo, sans-serif; }
 
@@ -22,9 +25,14 @@
     transform: translate(-50%, -50%) rotate(-90deg);
     font-family: Anton; font-size: 300px; letter-spacing: 0.02em;
     /* stops sampled from the hero photo's letters: lime V → mint → ice-cyan C */
-    background: linear-gradient(90deg, #a9e42f 6%, #4ee39a 48%, #38d6f8 90%);
+    background: linear-gradient(90deg, var(--c1) 6%, var(--c2) 48%, var(--c3) 90%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     white-space: nowrap;
+  }
+  .flavor {
+    position: absolute; left: 512px; bottom: 132px; transform: translateX(-50%);
+    font-family: Anton; font-size: 64px; letter-spacing: 0.16em; white-space: nowrap;
+    color: var(--c3);
   }
   .tagline {
     position: absolute; left: 512px; bottom: 68px; transform: translateX(-50%);
@@ -55,13 +63,15 @@
   /* glow pass: only the emissive artwork stays, on pure black */
   body.glow { background: #000; }
   body.glow .panel, body.glow .barcode, body.glow .tagline { visibility: hidden; }
+  body.glow .flavor { opacity: 0.8; }
 </style>
 <body>
   <div class="front">
     <svg class="bolt" width="150" height="210" viewBox="0 0 32 42">
-      <path d="M18 1 5 24h8l-3 16L27 14h-8l4-13z" fill="#3ae4fb"/>
+      <path d="M18 1 5 24h8l-3 16L27 14h-8l4-13z" fill="var(--bolt)"/>
     </svg>
     <div class="wordmark">VOLTIC</div>
+    <div class="flavor">ORIGINAL</div>
     <div class="tagline">LIQUID LIGHTNING · ENERGY</div>
   </div>
   <div class="back">
@@ -81,4 +91,13 @@
     </div>
     <div class="barcode"><div class="bars"></div><div class="digits">8 21712 00202 9</div></div>
   </div>
+<script>
+  const F = {
+    original: { c1: '#a9e42f', c2: '#4ee39a', c3: '#38d6f8', bolt: '#3ae4fb', name: 'ORIGINAL' },
+    citrus:   { c1: '#fff35a', c2: '#d8f53c', c3: '#8fe83a', bolt: '#e9ff52', name: 'CITRUS OVERLOAD' },
+    storm:    { c1: '#ff5ad2', c2: '#b46cff', c3: '#7b8dff', bolt: '#c9a2ff', name: 'STORM BERRY' },
+  }[new URLSearchParams(location.search).get('f') || 'original'];
+  for (const k of ['c1', 'c2', 'c3', 'bolt']) document.documentElement.style.setProperty('--' + k, F[k]);
+  document.querySelector('.flavor').textContent = F.name;
+</script>
 </body>

@@ -1,16 +1,14 @@
 #!/usr/bin/env node
 /** Headless QA: screenshots at key scroll positions + console error dump. */
-import { chromium } from 'playwright-core';
 import { join } from 'node:path';
-import { homedir } from 'node:os';
+import { launch } from './browser.mjs';
 
-const OUT = process.argv[3] || '/private/tmp/claude-501/-Users-joshadmin-Documents-src/5efd4a2d-4cb0-4ecd-898a-3c813291bbb5/scratchpad/qa';
-const URL = process.argv[2] || 'http://localhost:5199';
-const exe = join(homedir(), 'Library/Caches/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-mac-arm64/chrome-headless-shell');
+const OUT = process.argv[3] || './qa-out';
+const URL = process.argv[2] || 'http://localhost:5199/?full';
 
 const W = Number(process.env.QA_W) || 1440;
 const H = Number(process.env.QA_H) || 900;
-const browser = await chromium.launch({ executablePath: exe });
+const browser = await launch({ args: ['--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const page = await browser.newPage({ viewport: { width: W, height: H } });
 const errors = [];
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
@@ -19,18 +17,22 @@ page.on('pageerror', (e) => errors.push(String(e)));
 await page.goto(URL, { waitUntil: 'networkidle' });
 await page.waitForTimeout(1500);
 
+// every scene, including the pinned ones at a few points of their scroll
 const stops = await page.evaluate(() => {
-  const spin = document.querySelector('.spin');
-  const el = (s) => document.querySelector(s);
+  const top = (id) => { let t = 0; for (let n = document.getElementById(id); n; n = n.offsetParent) t += n.offsetTop; return t; };
+  const pin = (id, f) => {
+    const el = document.getElementById(id);
+    const stage = el.querySelector('[class$="-stage"]');
+    return top(id) + stage.offsetTop * 0 + (el.offsetHeight - stage.offsetHeight) * f;
+  };
   return {
     hero: 0,
-    'spin-25': spin.offsetTop + (spin.offsetHeight - innerHeight) * 0.25,
-    'spin-50': spin.offsetTop + (spin.offsetHeight - innerHeight) * 0.5,
-    'spin-90': spin.offsetTop + (spin.offsetHeight - innerHeight) * 0.9,
-    splash: el('#charge').offsetTop + 300,
-    macro: el('.macro').offsetTop - 200,
-    flavors: el('#flavors').offsetTop + 300,
-    cta: el('#cta').offsetTop,
+    'spin-10': pin('spin', 0.1), 'spin-31-back': pin('spin', 0.31), 'spin-90-facts': pin('spin', 0.9),
+    charge: top('charge') + innerHeight * 0.4,
+    circuit: top('circuit') + innerHeight * 0.6,
+    'flavor-original': pin('flavors', 0.14), 'flavor-citrus': pin('flavors', 0.52), 'flavor-storm': pin('flavors', 0.88),
+    shoot: pin('shoot', 0.5),
+    'cta-open': document.documentElement.scrollHeight,
   };
 });
 

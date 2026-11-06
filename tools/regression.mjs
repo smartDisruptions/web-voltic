@@ -6,19 +6,18 @@
  *
  *   node tools/regression.mjs <url> <outdir>
  */
-import { chromium } from 'playwright-core';
 import { readFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { homedir } from 'node:os';
+import { launch } from './browser.mjs';
 
 const URL = process.argv[2] || 'http://localhost:5199';
 const OUT = process.argv[3] || './regression-out';
 mkdirSync(OUT, { recursive: true });
-const exe = join(homedir(), 'Library/Caches/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-mac-arm64/chrome-headless-shell');
 const axeSrc = readFileSync(join(import.meta.dirname, '..', 'node_modules/axe-core/axe.min.js'), 'utf8');
 
 const failures = [];
-const b = await chromium.launch({ executablePath: exe });
+// SwiftShader keeps WebGL alive on GPU-less CI/cloud boxes; real GPUs ignore it
+const b = await launch({ args: ['--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 
 // ── main pass: errors, 404s, axe, screenshots ────────────────────────────
 {
@@ -91,17 +90,27 @@ for (const [name, w, h] of [['mobile', 390, 844], ['landscape', 844, 390], ['wid
   p.on('pageerror', (e) => errs.push(String(e)));
   await p.goto(URL, { waitUntil: 'networkidle' });
   await p.waitForTimeout(1500);
-  // scroll through the page so scroll-driven effects get their chance to fire
-  for (const f of [0.2, 0.5, 0.8, 1]) {
-    await p.evaluate((fr) => scrollTo({ top: (document.documentElement.scrollHeight - innerHeight) * fr, behavior: 'instant' }), f);
-    await p.waitForTimeout(900);
-  }
-  const checks = await p.evaluate(() => ({
-    revealsFired: [...document.querySelectorAll('.reveal')].filter((el) => el.classList.contains('is-in')).length > 10,
-    spinAlive: !!document.querySelector('.spin-3d canvas') || !!document.querySelector('.spin-canvas'),
-    cardShown: parseFloat(getComputedStyle(document.querySelector('.spin-card')).opacity) === 1,
-    counterRan: document.querySelector('.count[data-count="200"]').textContent === '200',
-  }));
+  // walk the page's scenes so every scroll-driven effect gets its chance
+  const at = (id, f) => p.evaluate(([id, f]) => {
+    const el = document.getElementById(id);
+    let top = 0; for (let n = el; n; n = n.offsetParent) top += n.offsetTop;
+    const pin = el.querySelector('[class$="-stage"]');
+    scrollTo({ top: top + (el.offsetHeight - (pin ? pin.offsetHeight : innerHeight)) * f, behavior: 'instant' });
+  }, [id, f]);
+  const checks = {};
+  await at('spin', 0.9); await p.waitForTimeout(1200);
+  checks.stageAlive = await p.evaluate(() => !!document.querySelector('.stage.is-live .stage-gl, .stage.is-fallback'));
+  checks.cardShown = await p.evaluate(() => parseFloat(getComputedStyle(document.querySelector('.spin-card')).opacity) > 0.95);
+  await at('charge', 0.5); await p.waitForTimeout(1800);
+  checks.counterRan = await p.evaluate(() => document.querySelector('.count[data-count="200"]').textContent === '200');
+  await at('circuit', 0.6); await p.waitForTimeout(900);
+  checks.nodesPowered = await p.evaluate(() => document.querySelectorAll('.node.is-on').length >= 3);
+  await at('flavors', 0.52); await p.waitForTimeout(1200);
+  checks.flavorSwitched = await p.evaluate(() => document.body.dataset.flavor === 'citrus');
+  await p.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+  await p.waitForTimeout(2200);
+  checks.canCracked = await p.evaluate(() => document.querySelector('.cta').classList.contains('is-open'));
+  checks.revealsFired = await p.evaluate(() => document.querySelectorAll('.reveal.is-in').length > 10);
   await p.screenshot({ path: join(OUT, 'reduced-motion.png') });
   for (const [k, v] of Object.entries(checks)) if (!v) failures.push(`forced-motion under reduce: ${k} failed`);
   if (errs.length) failures.push(`reduced-motion errors: ${errs.join(' | ')}`);
