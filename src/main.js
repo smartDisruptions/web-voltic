@@ -43,7 +43,7 @@ const MARKS = {
     cta:    { x: 0,     cy: 0.5,  hv: 0.62 },
   },
   tall: {
-    hero:   { x: 0,     cy: 0.35, hv: 0.47, rz: -3 },
+    hero:   { x: 0,     cy: 0.335, hv: 0.44, rz: -3 },
     spin:   { x: 0,     cy: 0.4,  hv: 0.56 },
     aside:  { x: 0,     cy: 0.265, hv: 0.3 },
     dock:   { x: 0.74,  cy: 0.52, hv: 0.84, rz: -10 },
